@@ -1,0 +1,12 @@
+.c-slider {
+    height: 60Vh;
+    .c-slider_image {
+        margin: 0 auto;
+        height: 100%;
+        img {
+            display: block;
+            height: 100%;
+            margin: 0 auto;
+        }
+    }
+}
