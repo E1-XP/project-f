@@ -6,7 +6,8 @@ export default class Controller {
         this.state = this.model.state;
         this.ajax = new Ajax();
 
-        this.init();
+        //this.init();
+        setTimeout(() => document.querySelector('.c-main_preloader').classList.remove('is-open'), 1000);
     }
 
     handleEvent() { }

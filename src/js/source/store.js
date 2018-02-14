@@ -1,16 +1,12 @@
 import EventEmitter from './dispatcher';
 
 export default class Store extends EventEmitter {
-    constructor(state) {
+    constructor(stateCandidate) {
         super();
 
-        this.stateCandidate = {
-            isLoading: true,
-            images: []
-        };
         this.state = {}
 
-        this.registerInitialState(this.stateCandidate);
+        this.registerInitialState(stateCandidate);
     }
 
     setState(obj) {
