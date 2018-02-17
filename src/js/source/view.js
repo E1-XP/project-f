@@ -1,6 +1,7 @@
 export default class View {
-    constructor(model) {
+    constructor(model, controller) {
         this.model = model;
+        this.controller = controller;
 
         this.attachHandlers();
         this.render();

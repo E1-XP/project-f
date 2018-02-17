@@ -7,11 +7,13 @@ export default class EventEmitter {
 
     observe(topic, ref) {
         if (!this.topics[topic]) this.topic[topic] = [];
-        console.log('new ref: ', ref, topic);
         if (!ref.render || typeof ref.render !== 'function') throw new Error('Incorrect interface, ensure render is a function.')
-        this.topics[topic].push(ref);
+        if (this.topics[topic].indexOf(ref) === -1) {
+            console.log('new ref: ', ref, topic);
+            this.topics[topic].push(ref);
+        }
         //console.log(this.topics);
-        console.log('called fn observe');
+        //console.log('called fn observe');
     }
 
     removeObserver(topic, ref) {

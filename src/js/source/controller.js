@@ -6,18 +6,18 @@ export default class Controller {
         this.state = this.model.state;
         this.ajax = new Ajax();
 
-        //this.init();
-        setTimeout(() => document.querySelector('.c-main_preloader').classList.remove('is-open'), 1000);
+        this.init(1);
+        //setTimeout(() => document.querySelector('.c-main_preloader').classList.remove('is-open'), 1000);
     }
 
     handleEvent() { }
 
-    init() {
+    init(n) {
         const imgCache = [];
         let loadedImgs = 0;
         const loader = document.querySelector('.c-preloader_text');
 
-        this.ajax.get(`https://boiling-citadel-14104.herokuapp.com/static/img/1`)
+        this.ajax.get(`https://boiling-citadel-14104.herokuapp.com/static/img/${n}`)
             .then(data => JSON.parse(data)).then(({ images }) => {
 
                 images.forEach(processElement.bind(this));
@@ -25,7 +25,7 @@ export default class Controller {
                 function processElement(el) {
                     const img = new Image();
                     img.src = `https://boiling-citadel-14104.herokuapp.com/${el.dir}`;
-                    imgCache.push(img.src);
+                    imgCache.push(img);
 
                     img.addEventListener('load', () => {
                         loadedImgs += 1;

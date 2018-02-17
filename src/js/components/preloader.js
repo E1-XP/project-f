@@ -1,8 +1,8 @@
 import View from '../source/view';
 
 export default class Preloader extends View {
-    constructor(model) {
-        super(model);
+    constructor(model, controller) {
+        super(model, controller);
 
         this.preloader = document.querySelector('.c-main_preloader');
 
@@ -11,6 +11,6 @@ export default class Preloader extends View {
     render() {
         console.log(this.model.state);
 
-        if (!this.model.state.isLoading) this.preloader.classList.remove('is-open');
+        if (!this.model.state.isLoading) setTimeout(() => this.preloader.classList.remove('is-open'), 500);
     }
 }

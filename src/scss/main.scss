@@ -1,8 +1,10 @@
 @import "./base/normalize/import-now";
 @import "./base/reset";
-@import "./base/typography";
 //
 @import "./helpers/variables";
+//
+@import "./base/typography";
+//
 @import "./helpers/helpers";
 //
 @import "./components/preloaders";

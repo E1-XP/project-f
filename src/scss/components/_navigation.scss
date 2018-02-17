@@ -1,4 +1,4 @@
-.main_navigation {
+.l-main_navigation {
     background-color: #0C0C0C;
     position: absolute;
     z-index: 5;
@@ -11,31 +11,43 @@
     transition: all 1s ease-in-out;
     display: flex;
     flex-direction: column;
-
-    .navigation_item {
+    .c-navigation_item {
         width: 100%;
         height: 33.333%;
-        background-color: burlywood;
+        background-color: gray;
         border: 1px solid red;
         cursor: pointer;
     }
 }
 
-.is-open.main_navigation {
+.is-open.l-main_navigation {
     opacity: 1;
 }
 
-.navigation_list {
+.c-navigation_list {
     height: 100%;
     margin: 0;
 }
 
-
-.is-open.navigation_button-full {
+.is-open.js-navigation_button-full {
     position: absolute;
+    z-index: 300;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     cursor: pointer;
+}
+
+.js-navigation_button {
+    cursor: pointer;
+    @extend .i1;
+}
+
+.c-header_navigation {
+    @extend .t1;
+    display: flex;
+    width: 6.2em;
+    justify-content: space-between;
+    align-items: center;
 }

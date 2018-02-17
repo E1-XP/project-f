@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700');
+.t0 {
+    font-family: 'Quicksand', sans-serif;
+    color: $white;
+}
+
+.t1 {
+    @extend .t0;
+    font-size: 30px;
+}
+
+.i1 {
+    font-size: 36px !important;
+}

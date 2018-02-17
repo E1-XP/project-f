@@ -7,37 +7,75 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>GTxMotorsports</title>
     <link rel="stylesheet" href="./css/style.css">
+    <!--temporary icon css below-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
     <div class="l-wrapper">
-        <div class="main_page">
-            <div class="navigation_button-full"></div>
+        <div class="l-main_page">
+            <div class="js-navigation_button-full"></div>
             <header class="c-main_header">
-                <h1 class="c-main_heading" style="color:white">Logo
-                    <!-- <img src="" alt="GTxMotorsports">-->
+                <h1 class="c-main_heading">
+                    <img src="./assets/img/main.png" alt="GTxMotorsports">
                 </h1>
-                <nav>
-                    <button class="navigation_button">OK</button>
+                <nav class="c-header_navigation">
+                    <span>Part One </span>
+                    /
+                    <span class="material-icons js-navigation_button">photo_library</span>
                 </nav>
             </header>
             <main class="l-main">
                 <div class="c-slider">
                     <figure class="c-slider_image">
-                        <img src="http://via.placeholder.com/1920x1080" alt="">
+                        <ul class="c-image_list">
+                            <!--there will go images from ajax-->
+                        </ul>
+                        <nav class="c-slider_navigation-overlay">
+                            <ul class="c-navigation_list">
+                                <li id="js-prev" class="c-navigation_item">
+                                    <span class="material-icons">arrow_back</span>
+                                </li>
+                                <li id="js-stop-start" class="c-navigation_item">
+                                    <span class="material-icons">stop</span>
+                                </li>
+                                <li id="js-download" class="c-navigation_item">
+                                    <span class="material-icons">file_download</span>
+                                </li>
+                                <li id="js-next" class="c-navigation_item">
+                                    <span class="material-icons">arrow_forward</span>
+                                </li>
+                            </ul>
+                            <span id="js-resize" class="js-button-resize material-icons">photo_size_select_large</span>
+                        </nav>
+                        <nav class="c-slider_navigation-thumbnails">
+                            <ul class="c-navigation_list">
+                                <!--actual thumnails here-->
+                            </ul>
+                        </nav>
                     </figure>
                 </div>
+                <section class="c-sliderinfo">
+                    <nav class="c-sliderinfo_navigation">
+                        <button id="js-thumbnail_gallery" class="js-sliderinfo_button">
+                            <span class="material-icons">grid_on</span>
+                        </button>
+                    </nav>
+                    <p>Test</p>
+                </section>
             </main>
+            <footer class="main_footer">
+                <p style="text-align:center"> &copy 2017 GTxMotorsports. All rights reserved.</p>
+            </footer>
         </div>
-        <nav class="main_navigation">
-            <ul class="navigation_list">
-                <li class="navigation_item"></li>
-                <li class="navigation_item"></li>
-                <li class="navigation_item"></li>
+        <nav class="l-main_navigation">
+            <ul class="c-navigation_list">
+                <li data-key="1" class="c-navigation_item"></li>
+                <li data-key="2" class="c-navigation_item"></li>
+                <li data-key="3" class="c-navigation_item"></li>
             </ul>
         </nav>
     </div>
-
     <!--preloader-->
     <div class="c-main_preloader is-open">
         <h2 class="c-preloader_text">0%</h2>
@@ -45,9 +83,7 @@
     <!--backgrounds-->
 
     <script src="/dist/jsbundle.js"></script>
-    <script>
 
-    </script>
 </body>
 
 </html>

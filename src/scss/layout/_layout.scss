@@ -10,16 +10,17 @@
     margin: 0 auto;
 }
 
-.main_page {
+.l-main_page {
     background-color: $darkGray;
-    width: 99.5vw;
-    height: 99.5vh;
+    width: 100vw;
+    height: 100vh;
     transition: all .3s ease-in-out;
-    position: relative;
+    position: absolute;
+    top: 0;
     z-index: 9;
 }
 
-.is-open.main_page {
+.is-open.l-main_page {
     transform: perspective(360vw) translateX(-15vw) scale(.8) rotateY(50deg);
-    border: 3px solid red;
+    border: 3px solid $white;
 }

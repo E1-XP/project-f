@@ -29,7 +29,7 @@ export default class Store extends EventEmitter {
 
             Object.defineProperty(this.state, key, {
                 get() {
-                    console.log('called getter!! ');
+                    //console.log('called getter!! ');
 
                     //console.log('where i am? ', self);
                     //console.log('you called me: ', this.caller)
