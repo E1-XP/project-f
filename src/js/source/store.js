@@ -9,8 +9,18 @@ export default class Store extends EventEmitter {
         this.registerInitialState(stateCandidate);
     }
 
-    setState(obj) {
+    setState(obj, caller) {
         const prevState = this.state;
+
+        Object.keys(obj).forEach(key => {
+            console.log(typeof obj.currentPart)
+            switch (typeof prevState[key]) {
+                case 'number': Number(obj[key]); break;
+                case 'string': String(obj[key]); break;
+                case 'boolean': Boolean(obj[key]); break;
+            }
+        });
+
         this.state = Object.assign({}, prevState, obj);
 
         for (let key in obj) {

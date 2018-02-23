@@ -9,18 +9,20 @@ import Slider from './components/slider';
 
 const initialState = {
     isLoading: true,
+    isLoadingNewPart: false,
     isNavOpen: false,
     isSliderRunning: false,
-    currentPart: null,
     interval: 3000,
-    images: []
+    currentPart: 0,
+    loadedPart: 1,
+    currentImage: "",
+    images: [],
+    navThumbnails: []
 }
 
 const App = () => {
     const store = new Store(initialState);
-
     const controller = new Controller(store);
-    //const view = new View(store);
     //views
     const preloader = new Preloader(store, controller);
     const mainPage = new MainPage(store, controller);

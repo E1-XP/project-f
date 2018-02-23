@@ -13,7 +13,6 @@ export default class Slider extends View {
     }
 
     populateDOM() {
-        document.querySelector('.c-slider ul').innerHTML = "";
         const imageList = document.createDocumentFragment();
 
         this.model.state.images.map((item, i, ar) => {
@@ -22,28 +21,49 @@ export default class Slider extends View {
 
             li.setAttribute('class', addClass + " c-image_item");
             li.setAttribute('data-key', i);
-            li.innerHTML = `<img alt="" src=${item.src}>`;
+            li.innerHTML = `<img alt="" src=${item.dir.src}>`;
 
             imageList.appendChild(li);
         });
+
+        document.querySelector('.c-slider ul').innerHTML = "";
         document.querySelector('.c-slider ul').appendChild(imageList);
-        this.model.setState({ currentPart: 1 });
+
+        this.setState({ currentPart: Number(this.model.state.loadedPart) });
+        this.generateThumbnailNavigation();
         this.stopStartSlider();
-        //console.log(!!this.stopStartSlider);
     }
 
+    generateThumbnailNavigation() {
+        const thumbGallery = document.createDocumentFragment();
+
+        this.model.state.images.map(item => {
+            const li = document.createElement('li');
+            li.classList.add('c-navigation_item');
+            li.innerHTML = `<img alt="" src=${item.thumbnail.src}>`;
+
+            thumbGallery.appendChild(li);
+        });
+
+        document.querySelector('.c-slider_navigation-thumbnails ul').innerHTML = "";
+        document.querySelector('.c-slider_navigation-thumbnails ul').appendChild(thumbGallery);
+    }
 
     nextSlide() {
         const imageList = document.querySelectorAll('.c-image_item');
 
         if (imageList[imageList.length - 1].classList.contains('active')) imageList[0].classList.add('active');
         else document.querySelector('.active').nextElementSibling.classList.add('active');
+
         if ((document.querySelectorAll('.active').length > 1) && (!(imageList[0].classList.contains('active') && imageList[imageList.length - 1].classList.contains('active')))) document.querySelector('.active').classList.remove('active');
         else if (document.querySelectorAll('.active').length > 1) imageList[imageList.length - 1].classList.remove('active');
         document.querySelector('.back').classList.remove('back');
+
         if (imageList[1].classList.contains('active')) imageList[0].classList.add('back');
         else if (imageList[0].classList.contains('active')) imageList[imageList.length - 1].classList.add('back');
         else document.querySelector('.active').previousElementSibling.classList.add('back');
+
+        this.setState({ currentImage: document.querySelector('.active').firstElementChild.getAttribute('src') });
     }
 
     prevSlide() {
@@ -70,15 +90,21 @@ export default class Slider extends View {
     }
 
     stopStartSlider() {
-        (this.model.state.isSliderRunning) ? (this.model.setState({ isSliderRunning: false }), clearInterval(window.sliderInterval)) : (this.model.setState({ isSliderRunning: true }), window.sliderInterval = setInterval(() => document.getElementById('js-next').click(), this.model.state.interval));
+        (this.model.state.isSliderRunning) ? (this.setState({ isSliderRunning: false }), clearInterval(window.sliderInterval)) : (this.setState({ isSliderRunning: true }), window.sliderInterval = setInterval(() => document.getElementById('js-next').click(), this.model.state.interval));
         const stopStartButtonDOM = document.getElementById('js-stop-start').firstElementChild;
         (this.model.state.isSliderRunning) ? stopStartButtonDOM.innerHTML = "stop" : stopStartButtonDOM.innerHTML = "play_arrow";
     }
 
+    stopSlider() {
+        if (this.model.state.isSliderRunning) {
+            this.setState({ isSliderRunning: false }); clearInterval(window.sliderInterval)
+            document.getElementById('js-stop-start').firstElementChild.innerHTML = "play_arrow";;
+        };
+    }
+
     render() {
-        if (!this.model.state.isLoading && !this.model.state.currentPart) this.populateDOM();
+        if (!this.model.state.isLoading && (this.model.state.currentPart !== this.model.state.loadedPart)) this.populateDOM();
         console.log('just rerendered.');
         //if (this.model.state.isSliderRunning) this.stopStartSlider();
-
     }
 }
