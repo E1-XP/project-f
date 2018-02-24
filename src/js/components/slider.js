@@ -3,13 +3,16 @@ import View from '../source/view';
 export default class Slider extends View {
     constructor(model, controller) {
         super(model, controller);
-        //this.sliderInterval=setInterval(,3000);
     }
 
     attachHandlers() {
         document.getElementById('js-prev').addEventListener('click', this.prevSlide.bind(this));
         document.getElementById('js-next').addEventListener('click', this.nextSlide.bind(this));
         document.getElementById('js-stop-start').addEventListener('click', this.stopStartSlider.bind(this));
+
+        document.querySelector('.c-slider_navigation-thumbnails ul').addEventListener('click', (e) => {
+            if (e.target.classList.contains('c-navigation_button')) this.handleThumbNavClick(e);
+        });
     }
 
     populateDOM() {
@@ -29,7 +32,7 @@ export default class Slider extends View {
         document.querySelector('.c-slider ul').innerHTML = "";
         document.querySelector('.c-slider ul').appendChild(imageList);
 
-        this.setState({ currentPart: Number(this.model.state.loadedPart) });
+        this.setState({ currentPart: Number(this.model.state.loadedPart), currentImage: 1 });
         this.generateThumbnailNavigation();
         this.stopStartSlider();
     }
@@ -37,16 +40,35 @@ export default class Slider extends View {
     generateThumbnailNavigation() {
         const thumbGallery = document.createDocumentFragment();
 
-        this.model.state.images.map(item => {
+        this.model.state.images.map((item, i) => {
             const li = document.createElement('li');
             li.classList.add('c-navigation_item');
+            li.setAttribute('data-key', i);
             li.innerHTML = `<img alt="" src=${item.thumbnail.src}>`;
 
+            const cover = document.createElement('div');
+            cover.classList.add('c-navigation_button');
+
+            li.appendChild(cover);
             thumbGallery.appendChild(li);
         });
 
         document.querySelector('.c-slider_navigation-thumbnails ul').innerHTML = "";
         document.querySelector('.c-slider_navigation-thumbnails ul').appendChild(thumbGallery);
+        document.querySelector('.c-slider_navigation-thumbnails .c-navigation_button').classList.add('is-active');
+    }
+
+    handleThumbNavClick(e) {
+        document.querySelector('.active').classList.remove('active')
+        document.querySelectorAll('.c-image_item')[e.target.parentElement.dataset.key].classList.add('active');
+
+        this.setState({ currentImage: Number(document.querySelector('.active').dataset.key) });
+        this.setActiveThumbnail();
+    }
+
+    setActiveThumbnail() {
+        document.querySelector('.c-slider_navigation-thumbnails .is-active').classList.remove('is-active');
+        document.querySelectorAll('.c-slider_navigation-thumbnails .c-navigation_item')[this.model.state.currentImage].lastElementChild.classList.add('is-active');
     }
 
     nextSlide() {
@@ -63,7 +85,8 @@ export default class Slider extends View {
         else if (imageList[0].classList.contains('active')) imageList[imageList.length - 1].classList.add('back');
         else document.querySelector('.active').previousElementSibling.classList.add('back');
 
-        this.setState({ currentImage: document.querySelector('.active').firstElementChild.getAttribute('src') });
+        this.setState({ currentImage: Number(document.querySelector('.active').dataset.key) });
+        this.setActiveThumbnail();
     }
 
     prevSlide() {
@@ -87,6 +110,9 @@ export default class Slider extends View {
             document.querySelector('.active').nextElementSibling.classList.remove('active');
             document.querySelector('.active').nextElementSibling.classList.add('back');
         }
+
+        this.setState({ currentImage: Number(document.querySelector('.active').dataset.key) });
+        this.setActiveThumbnail();
     }
 
     stopStartSlider() {
@@ -97,14 +123,14 @@ export default class Slider extends View {
 
     stopSlider() {
         if (this.model.state.isSliderRunning) {
-            this.setState({ isSliderRunning: false }); clearInterval(window.sliderInterval)
-            document.getElementById('js-stop-start').firstElementChild.innerHTML = "play_arrow";;
-        };
+            this.setState({ isSliderRunning: false });
+            clearInterval(window.sliderInterval);
+            document.getElementById('js-stop-start').firstElementChild.innerHTML = "play_arrow";
+        }
     }
 
     render() {
         if (!this.model.state.isLoading && (this.model.state.currentPart !== this.model.state.loadedPart)) this.populateDOM();
-        console.log('just rerendered.');
-        //if (this.model.state.isSliderRunning) this.stopStartSlider();
+        console.log('just rerendered.'); //if (this.model.state.isSliderRunning) this.stopStartSlider();
     }
 }

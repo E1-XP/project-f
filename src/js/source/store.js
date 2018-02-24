@@ -15,9 +15,19 @@ export default class Store extends EventEmitter {
         Object.keys(obj).forEach(key => {
             console.log(typeof obj.currentPart)
             switch (typeof prevState[key]) {
-                case 'number': Number(obj[key]); break;
-                case 'string': String(obj[key]); break;
-                case 'boolean': Boolean(obj[key]); break;
+                case 'number': {
+                    Number(obj[key]);
+                    console.log('coerced to number: ' + obj[key])
+                } break;
+                case 'string': {
+                    String(obj[key]);
+                    console.log('coerced to str: ' + obj[key])
+
+                } break;
+                case 'boolean': {
+                    Boolean(obj[key]);
+                    console.log('coerced to bool: ' + obj[key])
+                } break;
             }
         });
 

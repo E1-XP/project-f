@@ -6,7 +6,6 @@ export default class Controller {
         this.state = this.model.state;
         this.ajax = new Ajax();
 
-
         this.fetchImages(1, true);
         this.fetchNavThumbnails();
         //setTimeout(() => document.querySelector('.c-main_preloader').classList.remove('is-open'), 1000);

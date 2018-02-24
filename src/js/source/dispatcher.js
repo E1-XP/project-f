@@ -9,7 +9,7 @@ export default class EventEmitter {
         if (!this.topics[topic]) this.topic[topic] = [];
         if (!ref.render || typeof ref.render !== 'function') throw new Error('Incorrect interface, ensure render is a function.')
         if (this.topics[topic].indexOf(ref) === -1) {
-            console.log('new ref: ', ref, topic);
+            // console.log('new ref: ', ref, topic);
             this.topics[topic].push(ref);
         }
         //console.log(this.topics);
@@ -24,7 +24,7 @@ export default class EventEmitter {
 
     emit(topic) {
         if (!this.topics[topic]) return 0;
-        console.log('topics: ', this.getTopics());
+        // console.log('topics: ', this.getTopics());
         this.topics[topic].forEach(observer => observer.render());
         console.log('called emit!');
     }

@@ -12,10 +12,10 @@ const initialState = {
     isLoadingNewPart: false,
     isNavOpen: false,
     isSliderRunning: false,
-    interval: 3000,
+    interval: 5000,
     currentPart: 0,
     loadedPart: 1,
-    currentImage: "",
+    currentImage: 1,
     images: [],
     navThumbnails: []
 }

@@ -19,18 +19,12 @@ export default class MainPage extends View {
         document.querySelector('.l-main_page').classList.remove('is-open');
         document.querySelector('.js-navigation_button-full').classList.remove('is-open');
         document.querySelector('.l-main_navigation').classList.remove('is-open');
-        this.setState({
-            isNavOpen: false
-        });
+        this.setState({ isNavOpen: false });
     }
     handleHeaderNavigationButton() {
         document.querySelector('.l-main_page').classList.add('is-open');
         setTimeout(() => document.querySelector('.l-main_navigation').classList.add('is-open'), 500);
-        this.setState({
-            isNavOpen: true
-        });
-
-        console.log('test state');
+        this.setState({ isNavOpen: true });
     }
 
     render() {

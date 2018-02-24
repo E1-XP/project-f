@@ -424,11 +424,11 @@ h6,
 p {
   margin: 0; }
 
-.t0, .t1, .c-header_navigation, body {
+.t0, .t1, .l-main_navigation .c-navigation_item .c-navigation_button span, .c-header_navigation, body {
   font-family: 'Quicksand', sans-serif;
   color: #fff; }
 
-.t1, .c-header_navigation {
+.t1, .l-main_navigation .c-navigation_item .c-navigation_button span, .c-header_navigation {
   font-size: 30px; }
 
 .i1, .js-navigation_button {
@@ -506,11 +506,29 @@ p {
     border: 1px solid #fff;
     cursor: pointer;
     position: relative; }
+    .l-main_navigation .c-navigation_item .c-navigation_button {
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transition: all .3s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center; }
+      .l-main_navigation .c-navigation_item .c-navigation_button span {
+        opacity: 0; }
+      .l-main_navigation .c-navigation_item .c-navigation_button:hover {
+        background-color: rgba(0, 191, 255, 0.7); }
+        .l-main_navigation .c-navigation_item .c-navigation_button:hover span {
+          opacity: 1; }
     .l-main_navigation .c-navigation_item img {
       position: absolute;
       top: 0;
       left: 0;
-      height: 100%; }
+      height: 100%;
+      display: none; }
 
 .is-open.l-main_navigation {
   opacity: 1; }
@@ -632,7 +650,18 @@ p {
     .c-slider_navigation-thumbnails .c-navigation_list .c-navigation_item {
       flex: 1 1 11.11%;
       overflow: hidden;
-      border: 1px solid red; }
+      border: 1px solid red;
+      position: relative; }
+      .c-slider_navigation-thumbnails .c-navigation_list .c-navigation_item .c-navigation_button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: all .3s ease-in-out; }
+        .c-slider_navigation-thumbnails .c-navigation_list .c-navigation_item .c-navigation_button:hover {
+          background-color: rgba(184, 199, 0, 0.7);
+          cursor: pointer; }
       .c-slider_navigation-thumbnails .c-navigation_list .c-navigation_item img {
         width: 100%;
         filter: grayscale(1);
@@ -642,6 +671,9 @@ p {
 .is-open.c-slider_navigation-thumbnails {
   opacity: 1;
   pointer-events: all; }
+
+.is-active.c-navigation_button {
+  background-color: rgba(184, 199, 0, 0.7); }
 
 .active img {
   display: block !important;
