@@ -8,6 +8,7 @@
         margin: 0 auto;
         width: 100%;
         height: 100%;
+        box-shadow: -1px 3px 15px 0px rgba(50, 50, 50, 0.75);
         .c-image_list {
             position: relative;
             .c-image_item {
@@ -16,6 +17,7 @@
                     width: 100%;
                     max-width: 1200px;
                     position: absolute;
+                    border: 1.5px solid black;
                 }
             }
         }
@@ -140,7 +142,7 @@
     pointer-events: all;
 }
 
-.is-active.c-navigation_button{
+.is-active.c-navigation_button {
     background-color: rgba( $attackYellow, .7);
 }
 

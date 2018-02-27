@@ -11,6 +11,6 @@ export default class Preloader extends View {
     render() {
         console.log(this.model.state);
 
-        if (!this.model.state.isLoading) setTimeout(() => this.preloader.classList.remove('is-open'), 500);
+        if (!this.model.state.isLoading) setTimeout(() => this.preloader.classList.remove('is-open'), 1500);
     }
 }

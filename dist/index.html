@@ -13,12 +13,18 @@
 
 <body>
     <div class="l-wrapper">
-        <div class="l-main_page">
+        <ul class="c-background_list">
+            <li class="l-main_page-background active"></li>
+            <li class="l-main_page-background"></li>
+            <li class="l-main_page-background back"></li>
+        </ul>
+        <div class="l-main_page ">
             <div class="js-navigation_button-full"></div>
             <!--preloader-->
             <div class="c-mainpage_preloader">
                 <h2 class="c-preloader_text">0%</h2>
             </div>
+
             <header class="c-main_header">
                 <h1 class="c-main_heading">
                     <img src="./assets/img/main.png" alt="GTxMotorsports">
@@ -64,16 +70,21 @@
                         <button id="js-thumbnail_gallery" class="js-sliderinfo_button">
                             <span class="material-icons">grid_on</span>
                         </button>
-                        <span>1/27</span>
+                        <div class="c-sliderinfo_number">
+                            <span>1</span>/27</div>
                     </nav>
                     <p>Test</p>
+                    <div class="c-sliderinfo_likes">
+                        <span>99</span>
+                        <button class="c-button-likes" id="js-likes">+1</button>
+                    </div>
                 </section>
             </main>
             <footer class="main_footer">
-                <p style="text-align:center"> &copy 2017 GTxMotorsports. All rights reserved.</p>
+                <p style="text-align:center"> &copy; 2017 GTxMotorsports. All rights reserved.</p>
             </footer>
-
         </div>
+
         <nav class="l-main_navigation">
             <ul class="c-navigation_list">
                 <!--here will be thumbnail list-->
@@ -84,10 +95,8 @@
     <div class="c-main_preloader is-open">
         <h2 class="c-preloader_text">0%</h2>
     </div>
-    <!--backgrounds-->
 
     <script src="/dist/jsbundle.js"></script>
-
 </body>
 
 </html>

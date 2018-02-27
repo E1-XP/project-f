@@ -17,5 +17,8 @@
     "uglifyjs-webpack-plugin": "^1.1.8",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1"
+  },
+  "dependencies": {
+    "node-vibrant": "^3.0.0"
   }
 }

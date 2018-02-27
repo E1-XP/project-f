@@ -1,4 +1,5 @@
 import Ajax from '../helpers/ajax';
+import * as Vibrant from 'node-vibrant';
 
 export default class Controller {
     constructor(model) {
@@ -9,6 +10,10 @@ export default class Controller {
         this.fetchImages(1, true);
         this.fetchNavThumbnails();
         //setTimeout(() => document.querySelector('.c-main_preloader').classList.remove('is-open'), 1000);
+        this.setState = function (obj) {
+            const self = this;
+            this.model.setState(obj, self);
+        }
     }
 
     handleEvent() { }
@@ -19,7 +24,7 @@ export default class Controller {
 
         this.ajax.get(url).then(data => JSON.parse(data)).then(images => {
             let imgCounter = 0;
-            const isImgReady = () => ((imgCounter === 11) ? this.model.setState({ navThumbnails: imgCache }) : null);
+            const isImgReady = () => ((imgCounter === 11) ? this.setState({ navThumbnails: imgCache }) : null);
 
             const imgCache = images.map(item => {
                 return item.map(item2 => {
@@ -49,19 +54,66 @@ export default class Controller {
                     const thumb = new Image();
                     img.src = `https://boiling-citadel-14104.herokuapp.com/${item.dir}`;
                     thumb.src = `https://boiling-citadel-14104.herokuapp.com/${item.thumbnail}`;
-                    imgCache.push({ dir: img, thumbnail: thumb });
+                    imgCache.push({ dir: img, thumbnail: thumb, id: item.id, likes: item.likes });
 
                     img.addEventListener('load', () => {
-                        loadedImgs += 1;
-                        loader.textContent = Number((loadedImgs / 27) * 100).toFixed(2) + '%';
-                        if (loadedImgs === 27) {
-                            this.model.setState({ isLoading: false, images: imgCache, loadedPart: Number(n) });
-                            console.log('just set state, n=', n)
-                            setTimeout(() => loader.textContent = `0%`, 500);
+                        loader.textContent = Number((loadedImgs / 26) * 100).toFixed(2) + '%';
+                        console.log(loadedImgs);
+                        if (loadedImgs === 26) {
+                            console.log('imgcache: ', imgCache);
+                            this.extractColors(imgCache).then(colors => {
+                                const state = { isLoading: false, images: imgCache, colors, loadedPart: Number(n) };
+                                this.setState(state);
+
+                                console.log('just set state, n=', n)
+                                setTimeout(() => loader.textContent = `0%`, 1500);
+                            });
                         }
+                        loadedImgs += 1;
                     });
                 }
 
             });
+    }
+
+    extractColors(fetchedImages) {
+        const mapImages = () => new Promise((res, rej) => {
+            let colorArray = [];
+            let count = 0;
+
+            fetchedImages.forEach((item, i) => {
+                Vibrant.from(item.dir.src)
+                    .getPalette().then(result => {
+                        const rgb = result.DarkMuted._rgb.join(', ');
+                        colorArray.push({ i, rgb });
+
+                        if (count === 26) {
+                            console.log(colorArray);
+                            //colorArray = colorArray.sort((a, b) => a.i - b.i);
+                            //const images = fetchedImages.map((item2, idx) => {
+                            //    console.log(idx);
+                            //    return Object.assign(item2, { color: colorArray[idx].rgb });
+                            // });
+                            res(colorArray.sort((a, b) => a.i - b.i));
+                        }
+                        count += 1;
+                    }).catch(err => console.log(err));
+            });
+        });
+
+        return mapImages();
+    }
+
+    setLikes() {
+        //console.log('got_likes :' + this.model.state.currentImage, this.model.state.loadedPart);
+        const { currentImage, loadedPart } = this.model.state;
+        const url = `https://boiling-citadel-14104.herokuapp.com/likes/new/${loadedPart}/${currentImage}`;
+
+        this.ajax.post(url).then(resp => JSON.parse(resp)).then(info => {
+            const { images } = this.model.state;
+            images[Number(currentImage)].likes = info.likes;
+
+            this.setState({ images });
+        });
     }
 }

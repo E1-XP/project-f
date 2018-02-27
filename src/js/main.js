@@ -17,6 +17,7 @@ const initialState = {
     loadedPart: 1,
     currentImage: 1,
     images: [],
+    colors: [],
     navThumbnails: []
 }
 

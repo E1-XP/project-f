@@ -48,6 +48,9 @@ export default class Navigation extends View {
         console.log(e.target.parentElement.dataset.key);
         this.controller.fetchImages(e.target.parentElement.dataset.key);
 
+        document.querySelector('.l-main_page').classList.remove('h-noanim');
+        document.querySelector('.l-main_navigation').classList.remove('h-noanim');
+
         document.querySelector('.l-main_page').classList.remove('is-open');
         document.querySelector('.js-navigation_button-full').classList.remove('is-open');
         document.querySelector('.l-main_navigation').classList.remove('is-open');

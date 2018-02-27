@@ -11,6 +11,13 @@ export default class Ajax {
     }
 
     post(url, options) {
-        console.log('//TODO if needed');
+        const xhr = this.xhr ? this.xhr : new XMLHttpRequest();
+
+        xhr.open('POST', url, true);
+        xhr.send();
+
+        return (() => new Promise((res, rej) => xhr.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) res(xhr.responseText);
+        }))();
     }
 }

@@ -9,10 +9,14 @@ export default class Slider extends View {
         document.getElementById('js-prev').addEventListener('click', this.prevSlide.bind(this));
         document.getElementById('js-next').addEventListener('click', this.nextSlide.bind(this));
         document.getElementById('js-stop-start').addEventListener('click', this.stopStartSlider.bind(this));
+        document.getElementById('js-download').addEventListener('click', this.getFullImage.bind(this));
+        document.getElementById('js-likes').addEventListener('click', this.setLike.bind(this));
 
         document.querySelector('.c-slider_navigation-thumbnails ul').addEventListener('click', (e) => {
             if (e.target.classList.contains('c-navigation_button')) this.handleThumbNavClick(e);
         });
+
+        document.addEventListener('keydown', (e) => this.enableKeys(e));
     }
 
     populateDOM() {
@@ -33,6 +37,7 @@ export default class Slider extends View {
         document.querySelector('.c-slider ul').appendChild(imageList);
 
         this.setState({ currentPart: Number(this.model.state.loadedPart), currentImage: 1 });
+        this.setBackground(true, true);
         this.generateThumbnailNavigation();
         this.stopStartSlider();
     }
@@ -59,11 +64,13 @@ export default class Slider extends View {
     }
 
     handleThumbNavClick(e) {
-        document.querySelector('.active').classList.remove('active')
+        document.querySelector('.c-slider .active').classList.remove('active')
         document.querySelectorAll('.c-image_item')[e.target.parentElement.dataset.key].classList.add('active');
 
-        this.setState({ currentImage: Number(document.querySelector('.active').dataset.key) });
+        this.setState({ currentImage: Number(document.querySelector('.c-slider .active').dataset.key) });
         this.setActiveThumbnail();
+        this.getSlideNumber();
+        this.getLikes();
     }
 
     setActiveThumbnail() {
@@ -75,44 +82,50 @@ export default class Slider extends View {
         const imageList = document.querySelectorAll('.c-image_item');
 
         if (imageList[imageList.length - 1].classList.contains('active')) imageList[0].classList.add('active');
-        else document.querySelector('.active').nextElementSibling.classList.add('active');
+        else document.querySelector('.c-slider .active').nextElementSibling.classList.add('active');
 
-        if ((document.querySelectorAll('.active').length > 1) && (!(imageList[0].classList.contains('active') && imageList[imageList.length - 1].classList.contains('active')))) document.querySelector('.active').classList.remove('active');
-        else if (document.querySelectorAll('.active').length > 1) imageList[imageList.length - 1].classList.remove('active');
-        document.querySelector('.back').classList.remove('back');
+        if ((document.querySelectorAll('.c-slider .active').length > 1) && (!(imageList[0].classList.contains('active') && imageList[imageList.length - 1].classList.contains('active')))) document.querySelector('.c-slider .active').classList.remove('active');
+        else if (document.querySelectorAll('.c-slider .active').length > 1) imageList[imageList.length - 1].classList.remove('active');
+        document.querySelector('.c-slider .back').classList.remove('back');
 
         if (imageList[1].classList.contains('active')) imageList[0].classList.add('back');
         else if (imageList[0].classList.contains('active')) imageList[imageList.length - 1].classList.add('back');
-        else document.querySelector('.active').previousElementSibling.classList.add('back');
+        else document.querySelector('.c-slider .active').previousElementSibling.classList.add('back');
 
-        this.setState({ currentImage: Number(document.querySelector('.active').dataset.key) });
+        this.setState({ currentImage: Number(document.querySelector('.c-slider .active').dataset.key) });
+        this.setBackground(true);
         this.setActiveThumbnail();
+        this.getSlideNumber();
+        this.getLikes()
     }
 
     prevSlide() {
-        const imageList = document.querySelectorAll('.c-image_item');
+        const imageList = document.querySelectorAll('.c-slider .c-image_item');
 
         if (imageList[imageList.length - 1].classList.contains('back') && (imageList[0].classList.contains('active'))) {
-            document.querySelector('.back').classList.add('active');
-            document.querySelector('.back').classList.remove('back');
-            document.querySelector('.active').classList.add('back');
-            document.querySelector('.active').classList.remove('active');
+            document.querySelector('.c-slider .back').classList.add('active');
+            document.querySelector('.c-slider .back').classList.remove('back');
+            document.querySelector('.c-slider .active').classList.add('back');
+            document.querySelector('.c-slider .active').classList.remove('active');
         }
         else if (imageList[0].classList.contains('active')) {
-            document.querySelector('.active').nextElementSibling.classList.remove('back');
+            document.querySelector('.c-slider .active').nextElementSibling.classList.remove('back');
             imageList[imageList.length - 1].classList.add('active');
             imageList[0].classList.remove('active');
             imageList[0].classList.add('back');
         }
         else {
-            document.querySelector('.active').previousElementSibling.classList.add('active');
-            document.querySelector('.back').classList.remove('back');
-            document.querySelector('.active').nextElementSibling.classList.remove('active');
-            document.querySelector('.active').nextElementSibling.classList.add('back');
+            document.querySelector('.c-slider .active').previousElementSibling.classList.add('active');
+            document.querySelector('.c-slider .back').classList.remove('back');
+            document.querySelector('.c-slider .active').nextElementSibling.classList.remove('active');
+            document.querySelector('.c-slider .active').nextElementSibling.classList.add('back');
         }
 
-        this.setState({ currentImage: Number(document.querySelector('.active').dataset.key) });
+        this.setState({ currentImage: Number(document.querySelector('.c-slider .active').dataset.key) });
+        this.setBackground(false);
         this.setActiveThumbnail();
+        this.getSlideNumber();
+        this.getLikes();
     }
 
     stopStartSlider() {
@@ -126,6 +139,85 @@ export default class Slider extends View {
             this.setState({ isSliderRunning: false });
             clearInterval(window.sliderInterval);
             document.getElementById('js-stop-start').firstElementChild.innerHTML = "play_arrow";
+        }
+    }
+
+    setBackground(slideDirectionFlag, startMode = false) {
+        const backgroundList = document.querySelectorAll('.l-main_page-background');
+        const imageList = document.querySelectorAll('.c-slider_image .c-image_list li');
+
+        if (startMode) {
+            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${this.model.state.colors[0].rgb})`;
+            return 0;
+        }
+
+        //next
+        if (slideDirectionFlag) {
+            if (backgroundList[backgroundList.length - 1].classList.contains('active')) backgroundList[0].classList.add('active');
+            else document.querySelector('.c-background_list .active').nextElementSibling.classList.add('active');
+            if ((document.querySelectorAll('.c-background_list .active').length > 1) && (!(backgroundList[0].classList.contains('active') && backgroundList[backgroundList.length - 1].classList.contains('active')))) document.querySelector('.c-background_list .active').classList.remove('active');
+            else if (document.querySelectorAll('.c-background_list .active').length > 1) backgroundList[backgroundList.length - 1].classList.remove('active');
+            document.querySelector('.c-background_list .back').classList.remove('back');
+            if (backgroundList[1].classList.contains('active')) backgroundList[0].classList.add('back');
+            else if (backgroundList[0].classList.contains('active')) backgroundList[backgroundList.length - 1].classList.add('back');
+            else document.querySelector('.c-background_list .active').previousElementSibling.classList.add('back');
+
+            const idx = Array.from(imageList).indexOf(document.querySelector('.c-slider_image .c-image_list .active'));
+
+            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${this.model.state.colors[idx].rgb})`;
+        }
+
+        //back
+        else {
+            if (backgroundList[backgroundList.length - 1].classList.contains('back') && (backgroundList[0].classList.contains('active'))) {
+                document.querySelector('.c-background_list .back').classList.add('active');
+                document.querySelector('.c-background_list .back').classList.remove('back');
+                document.querySelector('.c-background_list .active').classList.add('back');
+                document.querySelector('.c-background_list .active').classList.remove('active');
+            }
+            else if (backgroundList[0].classList.contains('active')) {
+                document.querySelector('.c-background_list .active').nextElementSibling.classList.remove('back');
+                backgroundList[backgroundList.length - 1].classList.add('active');
+                backgroundList[0].classList.remove('active');
+                backgroundList[0].classList.add('back');
+            }
+            else {
+                document.querySelector('.c-background_list .active').previousElementSibling.classList.add('active');
+                document.querySelector('.c-background_list .back').classList.remove('back');
+                document.querySelector('.c-background_list .active').nextElementSibling.classList.remove('active');
+                document.querySelector('.c-background_list .active').nextElementSibling.classList.add('back');
+            }
+            const idx = Array.from(imageList).indexOf(document.querySelector('.c-slider_image .c-image_list .active'));
+
+            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${this.model.state.colors[idx].rgb})`;
+        }
+    }
+
+    getFullImage(e) {
+        window.open(document.querySelector('.c-slider .active').firstElementChild.getAttribute('src'));
+    }
+
+    getSlideNumber() {
+        document.querySelector('.c-sliderinfo_number span').innerHTML = Number(this.model.state.currentImage) + 1;
+    }
+
+    getLikes() {
+        document.querySelector('.c-sliderinfo_likes span').innerHTML = this.model.state.images[this.model.state.currentImage].likes;
+    }
+
+    setLike() {
+        this.controller.setLikes();
+
+        let likes = document.querySelector('.c-sliderinfo_likes span').innerHTML;
+        document.querySelector('.c-sliderinfo_likes span').innerHTML = Number(likes) + 1;
+    }
+
+    enableKeys(e) {
+        switch (e.keyCode) {
+            case 39: this.nextSlide(); break;
+            case 37: this.prevSlide(); break;
+            case 32: this.stopStartSlider(); break;
+            //TODO resize                
         }
     }
 
