@@ -1,0 +1,32 @@
+.c-button {
+    @extend .i1;
+    padding: .5em;
+    cursor: pointer;
+    &:hover {
+        background-color: red;
+    }
+}
+
+.c-button-social {
+    @extend .c-button;
+}
+
+.c-button-socialfb {
+    @extend .c-button-social;
+    background-color: #3b5999;
+}
+
+.c-button-socialtt {
+    @extend .c-button-social;
+    background-color: #55acee;
+}
+
+.c-button-socialda {
+    @extend .c-button-social;
+    background-color: #05cc47;
+}
+
+.c-button-socialfl {
+    @extend .c-button-social;
+    background-color: #fff;
+}

@@ -8,8 +8,9 @@ export default class MainPage extends View {
     }
     attachHandlers() {
         document.querySelector('.js-navigation_button-full').addEventListener('click', this.handleNavigationButtonFullScreen.bind(this));
-        document.querySelector('.js-navigation_button').addEventListener('click', this.handleHeaderNavigationButton.bind(this));
+        document.getElementById('js-change-section').addEventListener('click', this.handleHeaderNavigationButton.bind(this));
         document.getElementById('js-thumbnail_gallery').addEventListener('click', this.toggleThumbnailGallery.bind(this));
+        document.getElementById('js-before-after').addEventListener('click', this.handleBeforeAfterButton.bind(this));
     }
 
     toggleThumbnailGallery() {
@@ -27,17 +28,40 @@ export default class MainPage extends View {
     }
 
     handleHeaderNavigationButton() {
-        document.querySelector('.l-main_page').classList.add('is-open');
-        setTimeout(() => document.querySelector('.l-main_page').classList.add('h-noanim'), 300);
+        const { loadedPart } = this.model.state;
 
-        setTimeout(() => document.querySelector('.l-main_navigation').classList.add('is-open'), 500);
-        setTimeout(() => document.querySelector('.l-main_navigation').classList.add('h-noanim'), 1500);
-        this.setState({ isNavOpen: true });
+        if (loadedPart !== 5) {
+            document.querySelector('.l-main_page').classList.add('is-open');
+            setTimeout(() => document.querySelector('.l-main_page').classList.add('h-noanim'), 300);
+
+            setTimeout(() => document.querySelector('.l-main_navigation').classList.add('is-open'), 500);
+            setTimeout(() => document.querySelector('.l-main_navigation').classList.add('h-noanim'), 1500);
+            this.setState({ isNavOpen: true });
+        }
+        else {
+            this.controller.fetchImages(1);
+            this.setState({ isLoadingNewPart: true });
+            document.querySelector('.c-mainpage_preloader').classList.add('is-open');
+            //document.getElementById('js-header-part').textContent = "";
+            document.querySelectorAll('.c-header_navigation li a')[1].innerHTML = '<span class="material-icons js-navigation_button">photo_library</span>';
+            document.querySelector('.c-slider_navigation-overlay').classList.add('is-open');
+        }
     }
+
+    handleBeforeAfterButton() {
+        //this.controller.ajax.get(url).then(data => console.log(data));
+        this.controller.fetchImages(5);
+        this.setState({ isLoadingNewPart: true });
+        document.querySelector('.c-mainpage_preloader').classList.add('is-open');
+        document.getElementById('js-header-part').textContent = "";
+        document.querySelectorAll('.c-header_navigation li a')[1].innerHTML = 'Go Back <span class="material-icons">arrow_forward</span>';
+    }
+
     setFooter() {
         //TODO
         //document.querySelector('')
     }
+
     render() {
         // const self = this;
         //console.log(this.model.state);

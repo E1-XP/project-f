@@ -3,8 +3,6 @@ import View from '../source/view';
 export default class Navigation extends View {
     constructor(model, controller) {
         super(model, controller);
-
-        //  this.preloader = document.querySelector('.c-main_preloader');
     }
     attachHandlers() {
         document.querySelector('.l-main_navigation').addEventListener('click', (e) => {
@@ -15,6 +13,8 @@ export default class Navigation extends View {
     fillMainNavWithThumbnails() {
         const imageNavList = document.createDocumentFragment();
         const { loadedPart, navThumbnails } = this.model.state;
+
+        if (loadedPart === 5) return 0;
 
         let i = 1;
         while (i <= 4) {

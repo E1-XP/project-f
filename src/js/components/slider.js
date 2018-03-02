@@ -17,45 +17,88 @@ export default class Slider extends View {
         });
 
         document.addEventListener('keydown', (e) => this.enableKeys(e));
+        document.querySelector('.c-image_list').addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('c-button-drag')) this.enableResizableSlider(e);
+        });
+
     }
 
     populateDOM() {
-        const imageList = document.createDocumentFragment();
+        const { loadedPart } = this.model.state;
 
-        this.model.state.images.map((item, i, ar) => {
+        if (Number(loadedPart) !== 5) {
+
+            const imageList = document.createDocumentFragment();
+
+            this.model.state.images.map((item, i, ar) => {
+                const li = document.createElement('li');
+                const addClass = (i > 0 && i < ar.length - 1) ? "" : ((i === 0) ? "active" : "back");
+
+                li.setAttribute('class', addClass + " c-image_item");
+                li.setAttribute('data-key', i);
+                li.innerHTML = `<img alt="" src=${item.dir.src}>`;
+
+                imageList.appendChild(li);
+            });
+
+            document.querySelector('.c-slider ul').innerHTML = "";
+            document.querySelector('.c-slider ul').appendChild(imageList);
+
+            this.setState({ currentPart: Number(loadedPart), currentImage: 1 });
+            this.setBackground(true, true);
+            this.generateThumbnailNavigation();
+            this.stopStartSlider();
+        }
+
+        else {
             const li = document.createElement('li');
-            const addClass = (i > 0 && i < ar.length - 1) ? "" : ((i === 0) ? "active" : "back");
+            li.setAttribute('class', " c-image_item");
+            li.setAttribute('data-key', 0);
 
-            li.setAttribute('class', addClass + " c-image_item");
-            li.setAttribute('data-key', i);
-            li.innerHTML = `<img alt="" src=${item.dir.src}>`;
+            let i = 0;
+            while (i !== 2) {
+                const div = document.createElement('div');
+                div.setAttribute('class', "c-imagediv");
+                div.style.backgroundImage = `url(${this.model.state.images[i].dir.src})`;
+                if (i === 1) {
+                    const span = document.createElement('span');
+                    span.setAttribute('class', 'c-button-drag');
+                    div.appendChild(span);
+                }
+                li.appendChild(div);
+                i += 1;
+            }
+            //const addClass = (idx > 0 && idx < ar.length - 1) ? "" : ((idx === 0) ? "active" : "back");
+            //JUST REPLACE IMAGES
+            document.querySelector('.c-slider ul').innerHTML = "";
+            document.querySelector('.c-slider ul').appendChild(li);
+            // document.querySelector('.c-slider_resize').classList.add('is-open');
+            document.querySelector('.c-slider_navigation-overlay').classList.remove('is-open');
 
-            imageList.appendChild(li);
-        });
-
-        document.querySelector('.c-slider ul').innerHTML = "";
-        document.querySelector('.c-slider ul').appendChild(imageList);
-
-        this.setState({ currentPart: Number(this.model.state.loadedPart), currentImage: 1 });
-        this.setBackground(true, true);
-        this.generateThumbnailNavigation();
-        this.stopStartSlider();
+            this.setState({ currentPart: Number(this.model.state.loadedPart), currentImage: 1 });
+            this.setBackground(true, true);
+            this.generateThumbnailNavigation();
+        }
     }
 
     generateThumbnailNavigation() {
         const thumbGallery = document.createDocumentFragment();
+        const isEven = n => !(n % 2);
+        const { loadedPart } = this.model.state;
 
         this.model.state.images.map((item, i) => {
-            const li = document.createElement('li');
-            li.classList.add('c-navigation_item');
-            li.setAttribute('data-key', i);
-            li.innerHTML = `<img alt="" src=${item.thumbnail.src}>`;
+            if ((Number(loadedPart) !== 5) || ((Number(loadedPart) == 5) && (!isEven(i)))) {
+                const li = document.createElement('li');
+                li.classList.add('c-navigation_item');
+                li.setAttribute('data-key', i);
+                li.innerHTML = `<img alt="" src=${item.thumbnail.src}>`;
 
-            const cover = document.createElement('div');
-            cover.classList.add('c-navigation_button');
+                const cover = document.createElement('div');
+                cover.classList.add('c-navigation_button');
 
-            li.appendChild(cover);
-            thumbGallery.appendChild(li);
+                li.appendChild(cover);
+                thumbGallery.appendChild(li);
+            }
         });
 
         document.querySelector('.c-slider_navigation-thumbnails ul').innerHTML = "";
@@ -64,13 +107,28 @@ export default class Slider extends View {
     }
 
     handleThumbNavClick(e) {
-        document.querySelector('.c-slider .active').classList.remove('active')
-        document.querySelectorAll('.c-image_item')[e.target.parentElement.dataset.key].classList.add('active');
+        const { loadedPart } = this.model.state;
+        const idx = e.target.parentElement.dataset.key;
 
-        this.setState({ currentImage: Number(document.querySelector('.c-slider .active').dataset.key) });
-        this.setActiveThumbnail();
-        this.getSlideNumber();
-        this.getLikes();
+        if (Number(loadedPart) === 5) {
+            document.querySelectorAll('.c-slider .c-image_list .c-imagediv')[0].style.backgroundImage = `url(${this.model.state.images[idx - 1].dir.src})`;
+            document.querySelectorAll('.c-slider .c-image_list .c-imagediv')[1].style.backgroundImage = `url(${this.model.state.images[idx].dir.src})`;
+            document.querySelectorAll('.c-slider .c-image_list .c-imagediv')[1].style.width = `50%`;
+
+            this.setState({ currentImage: ((Number(idx) + 1) / 2) - 1 });
+            this.setActiveThumbnail();
+            this.getSlideNumber();
+
+        }
+        else {
+            document.querySelector('.c-slider .active').classList.remove('active')
+            document.querySelectorAll('.c-image_item')[idx].classList.add('active');
+
+            this.setState({ currentImage: Number(document.querySelector('.c-slider .active').dataset.key) });
+            this.setActiveThumbnail();
+            this.getSlideNumber();
+            this.getLikes();
+        }
     }
 
     setActiveThumbnail() {
@@ -193,6 +251,27 @@ export default class Slider extends View {
         }
     }
 
+    enableResizableSlider(e) {
+        console.log('just get called');
+        window.addEventListener('mousemove', startResizing);
+        window.addEventListener('mouseup', stopResizing);
+
+        function startResizing(e) {
+            console.log('startresizing');
+            const div = document.querySelectorAll('.c-slider .c-image_list .c-imagediv')[1];
+
+            let dim = e.clientX - div.offsetLeft;
+            if (dim >= 0 && dim <= 800) div.style.width = (e.clientX - div.offsetLeft) + 'px';
+        }
+
+        function stopResizing() {
+            console.log('stopped resizing');
+
+            window.removeEventListener('mousemove', startResizing);
+            window.removeEventListener('mouseup', stopResizing);
+        }
+    }
+
     getFullImage(e) {
         window.open(document.querySelector('.c-slider .active').firstElementChild.getAttribute('src'));
     }
@@ -213,11 +292,11 @@ export default class Slider extends View {
     }
 
     enableKeys(e) {
-        switch (e.keyCode) {
+        if (Number(this.model.state.loadedPart) !== 5) switch (e.keyCode) {
             case 39: this.nextSlide(); break;
             case 37: this.prevSlide(); break;
             case 32: this.stopStartSlider(); break;
-            //TODO resize                
+            //TODO resize,navigation                
         }
     }
 

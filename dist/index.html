@@ -7,8 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>GTxMotorsports</title>
     <link rel="stylesheet" href="./css/style.css">
-    <!--temporary icon css below-->
+    <!--temporary icons src below-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 </head>
 
 <body>
@@ -27,12 +28,24 @@
 
             <header class="c-main_header">
                 <h1 class="c-main_heading">
-                    <img src="./assets/img/main.png" alt="GTxMotorsports">
+                    <a href="/">
+                        <img src="./assets/img/main.png" alt="GTxMotorsports">
+                    </a>
                 </h1>
                 <nav class="c-header_navigation">
-                    <span>Part One </span>
-                    /
-                    <span class="material-icons js-navigation_button">photo_library</span>
+                    <ul class="c-navigation_list">
+                        <li class="c-navigation_item">
+                            <a href="#" id="js-before-after">Before / After Special</a>
+                        </li>
+                        <li class="c-navigation_item">
+                            <span id="js-header-part">Part One /</span>
+
+                            <a href="#" id="js-change-section">
+                                <span class="material-icons js-navigation_button">photo_library</span>
+                            </a>
+                        </li>
+                    </ul>
+
                 </nav>
             </header>
             <main class="l-main">
@@ -41,7 +54,7 @@
                         <ul class="c-image_list">
                             <!--there will go images from ajax-->
                         </ul>
-                        <nav class="c-slider_navigation-overlay">
+                        <nav class="c-slider_navigation-overlay is-open">
                             <ul class="c-navigation_list">
                                 <li id="js-prev" class="c-navigation_item">
                                     <span class="material-icons">arrow_back</span>
@@ -50,7 +63,7 @@
                                     <span class="material-icons">stop</span>
                                 </li>
                                 <li id="js-download" class="c-navigation_item">
-                                    <span class="material-icons">file_download</span>
+                                    <span class="material-icons">open_in_new</span>
                                 </li>
                                 <li id="js-next" class="c-navigation_item">
                                     <span class="material-icons">arrow_forward</span>
@@ -80,8 +93,34 @@
                     </div>
                 </section>
             </main>
-            <footer class="main_footer">
-                <p style="text-align:center"> &copy; 2017 GTxMotorsports. All rights reserved.</p>
+            <footer class="l-main_footer">
+                <div class="c-footer_copyright">
+                    <p> &copy; 2017 GTxMotorsports. All rights reserved.</p>
+                </div>
+                <nav class="c-footer_social">
+                    <ul class="c-navigation_list">
+                        <li class="c-navigation_item">
+                            <a class="c-button-socialfb">
+                                <span class="fab fa-facebook-f"></span>
+                            </a>
+                        </li>
+                        <li class="c-navigation_item">
+                            <a class="c-button-socialtt">
+                                <span class="fab fa-twitter"></span>
+                            </a>
+                        </li>
+                        <li class="c-navigation_item">
+                            <a class="c-button-socialda">
+                                <span class="fab fa-deviantart"></span>
+                            </a>
+                        </li>
+                        <li class="c-navigation_item">
+                            <a class="c-button-socialfb">
+                                <span class="fab fa-facebook-f"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </footer>
         </div>
 

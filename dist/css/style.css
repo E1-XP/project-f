@@ -409,7 +409,8 @@ template {
 ul,
 ol {
   list-style-type: none;
-  padding: 0; }
+  padding: 0;
+  margin: 0; }
 
 a {
   text-decoration: none;
@@ -429,10 +430,11 @@ p {
   color: #fff; }
 
 .t1, .l-main_navigation .c-navigation_list .c-navigation_item .c-navigation_button span, .c-header_navigation {
-  font-size: 30px; }
+  font-size: 23px;
+  font-weight: 500; }
 
-.i1, .js-navigation_button {
-  font-size: 36px !important; }
+.i1, .c-button, .c-button-social, .c-button-socialfb, .c-button-socialtt, .c-button-socialda, .c-button-socialfl, .js-navigation_button {
+  font-size: 28px !important; }
 
 .h-visuallyhidden {
   border: 0;
@@ -450,6 +452,24 @@ p {
 
 .h-noanim {
   transition: none !important; }
+
+.c-button, .c-button-social, .c-button-socialfb, .c-button-socialtt, .c-button-socialda, .c-button-socialfl {
+  padding: .5em;
+  cursor: pointer; }
+  .c-button:hover, .c-button-social:hover, .c-button-socialfb:hover, .c-button-socialtt:hover, .c-button-socialda:hover, .c-button-socialfl:hover {
+    background-color: red; }
+
+.c-button-socialfb {
+  background-color: #3b5999; }
+
+.c-button-socialtt {
+  background-color: #55acee; }
+
+.c-button-socialda {
+  background-color: #05cc47; }
+
+.c-button-socialfl {
+  background-color: #fff; }
 
 .c-main_preloader {
   position: absolute;
@@ -559,9 +579,21 @@ p {
 
 .c-header_navigation {
   display: flex;
-  width: 6.2em;
   justify-content: space-between;
   align-items: center; }
+  .c-header_navigation .c-navigation_list {
+    display: flex;
+    width: 18em;
+    justify-content: space-between;
+    align-items: center; }
+    .c-header_navigation .c-navigation_list .c-navigation_item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center; }
+
+#js-before-after {
+  transition: all .3s ease-in-out;
+  cursor: pointer; }
 
 .c-slider {
   width: 97%;
@@ -582,6 +614,17 @@ p {
         max-width: 1200px;
         position: absolute;
         border: 1.5px solid black; }
+      .c-slider .c-slider_image .c-image_list .c-image_item .c-imagediv {
+        width: 100%;
+        max-width: 1200px;
+        position: absolute;
+        border: 1.5px solid black;
+        height: 54.65vw;
+        max-height: 654.75px;
+        background-size: cover;
+        background-repeat: no-repeat; }
+        .c-slider .c-slider_image .c-image_list .c-image_item .c-imagediv:last-of-type {
+          width: 50%; }
 
 .c-sliderinfo {
   color: #333;
@@ -599,7 +642,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
+  display: none;
   justify-content: center; }
   .c-slider_navigation-overlay:hover .c-navigation_list,
   .c-slider_navigation-overlay:hover .js-button-resize {
@@ -608,7 +651,7 @@ p {
   .c-slider_navigation-overlay .c-navigation_list {
     display: flex;
     position: absolute;
-    bottom: 0;
+    bottom: 3px;
     margin: 0;
     height: initial;
     opacity: 0;
@@ -623,10 +666,13 @@ p {
       .c-slider_navigation-overlay .c-navigation_list .c-navigation_item:hover {
         background-color: #333; }
 
+.is-open.c-slider_navigation-overlay {
+  display: flex !important; }
+
 .js-button-resize {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 3px;
+  bottom: 3px;
   padding: .3em;
   background-color: rgba(12, 12, 12, 0.7);
   cursor: pointer;
@@ -685,12 +731,14 @@ p {
 .is-active.c-navigation_button {
   background-color: rgba(184, 199, 0, 0.7); }
 
-.active img {
+.active img,
+.active div {
   display: block !important;
   z-index: 100;
   animation: fadeAnim .5s 0s; }
 
-.back img {
+.back img,
+.back div {
   display: block !important;
   z-index: 90; }
 
@@ -699,6 +747,18 @@ p {
     opacity: 0; }
   100% {
     opacity: 1; } }
+.c-button-drag {
+  width: 20px;
+  height: 50px;
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  margin-top: -26px;
+  background: #fff;
+  border: 1px solid black;
+  cursor: pointer;
+  display: block; }
+
 body {
   background-color: #0C0C0C; }
 
@@ -764,8 +824,17 @@ body {
   .c-main_heading img {
     height: .9em; }
 
-.main_footer {
+.l-main_footer {
   position: relative;
-  z-index: 11; }
+  z-index: 11;
+  display: flex;
+  justify-content: space-between;
+  margin: auto 1em; }
+
+.c-footer_copyright p {
+  text-align: center; }
+
+.c-footer_social .c-navigation_list {
+  display: flex; }
 
 /*# sourceMappingURL=style.css.map */

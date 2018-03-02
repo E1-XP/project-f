@@ -30,7 +30,7 @@ export default class Controller {
                 return item.map(item2 => {
                     const img = new Image();
                     img.src = urlBase + item2;
-                    img.addEventListener('load', () => { imgCounter += 1; isImgReady() });
+                    img.addEventListener('load', () => { imgCounter += 1; isImgReady(); });
                     return img;
                 })
             })
@@ -47,7 +47,33 @@ export default class Controller {
         this.ajax.get(url)
             .then(data => JSON.parse(data)).then(({ images }) => {
 
-                images.forEach(processElement.bind(this));
+                if (n !== 5) images.forEach(processElement.bind(this));
+                else images.forEach(processElementSpecial.bind(this));
+
+                function processElementSpecial(item) {
+                    const img = new Image();
+                    const thumb = new Image();
+                    img.src = `https://boiling-citadel-14104.herokuapp.com/${item.dir}`;
+                    thumb.src = `https://boiling-citadel-14104.herokuapp.com/${item.thumbnail}`;
+                    imgCache.push({ dir: img, thumbnail: thumb, id: item.id, likes: item.likes });
+
+                    img.addEventListener('load', () => {
+                        loader.textContent = Number((loadedImgs / 3) * 100).toFixed(2) + '%';
+                        console.log(loadedImgs);
+                        if (loadedImgs === images.length - 1) {
+                            console.log('imgcache: ', imgCache);
+                            this.extractColors(imgCache).then(colors => {
+                                const state = { isLoading: false, images: imgCache, colors, loadedPart: Number(n) };
+                                this.setState(state);
+
+                                this.setCurrentPartInNavigation();
+                                console.log('just set state, n=', n)
+                                setTimeout(() => loader.textContent = `0%`, 1500);
+                            });
+                        }
+                        loadedImgs += 1;
+                    });
+                }
 
                 function processElement(item) {
                     const img = new Image();
@@ -65,6 +91,7 @@ export default class Controller {
                                 const state = { isLoading: false, images: imgCache, colors, loadedPart: Number(n) };
                                 this.setState(state);
 
+                                this.setCurrentPartInNavigation();
                                 console.log('just set state, n=', n)
                                 setTimeout(() => loader.textContent = `0%`, 1500);
                             });
@@ -87,7 +114,7 @@ export default class Controller {
                         const rgb = result.DarkMuted._rgb.join(', ');
                         colorArray.push({ i, rgb });
 
-                        if (count === 26) {
+                        if (count === fetchedImages.length - 1) {
                             console.log(colorArray);
                             //colorArray = colorArray.sort((a, b) => a.i - b.i);
                             //const images = fetchedImages.map((item2, idx) => {
@@ -115,5 +142,12 @@ export default class Controller {
 
             this.setState({ images });
         });
+    }
+
+    setCurrentPartInNavigation() {
+        const { loadedPart } = this.model.state;
+        const parts = ['One', 'Two', 'Three', 'Four'];
+
+        if (Number(loadedPart) !== 5) document.getElementById('js-header-part').innerHTML = `Part ${parts[Number(this.model.state.loadedPart) - 1]} /`;
     }
 }

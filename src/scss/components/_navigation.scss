@@ -71,7 +71,10 @@
     left: 0;
     width: 100%;
     height: 100%;
-    cursor: pointer;
+    cursor: pointer; // transition: all .3s ease-in-out;
+    // &:hover {
+    //      background-color: rgba( darkturquoise, .5);
+    // }
 }
 
 .js-navigation_button {
@@ -81,8 +84,27 @@
 
 .c-header_navigation {
     @extend .t1;
-    display: flex;
-    width: 6.2em;
+    display: flex; //width: 6.5em;
     justify-content: space-between;
     align-items: center;
+    .c-navigation_list {
+        display: flex;
+        width: 18em;
+        justify-content: space-between;
+        align-items: center;
+        .c-navigation_item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+}
+
+#js-before-after {
+    transition: all .3s ease-in-out;
+    cursor: pointer;
+    &:hover {
+        // border-radius: 20px;
+         //border: 2px solid white;
+    }
 }

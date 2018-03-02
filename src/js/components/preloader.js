@@ -5,12 +5,10 @@ export default class Preloader extends View {
         super(model, controller);
 
         this.preloader = document.querySelector('.c-main_preloader');
-
     }
 
     render() {
         console.log(this.model.state);
-
         if (!this.model.state.isLoading) setTimeout(() => this.preloader.classList.remove('is-open'), 1500);
     }
 }

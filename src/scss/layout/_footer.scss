@@ -1,4 +1,19 @@
-.main_footer {
+.l-main_footer {
     position: relative;
     z-index: 11;
+    display: flex;
+    justify-content: space-between;
+    margin: auto 1em;
+}
+
+.c-footer_copyright {
+    p {
+        text-align: center;
+    }
+}
+
+.c-footer_social {
+    .c-navigation_list {
+        display: flex;
+    }
 }
