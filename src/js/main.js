@@ -7,19 +7,7 @@ import MainPage from './components/mainpage';
 import Navigation from './components/navigation';
 import Slider from './components/slider';
 
-const initialState = {
-    isLoading: true,
-    isLoadingNewPart: false,
-    isNavOpen: false,
-    isSliderRunning: false,
-    interval: 5000,
-    currentPart: 0,
-    loadedPart: 1,
-    currentImage: 1,
-    images: [],
-    colors: [],
-    navThumbnails: []
-}
+import initialState from './state';
 
 const App = () => {
     const store = new Store(initialState);

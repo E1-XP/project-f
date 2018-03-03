@@ -15,6 +15,8 @@ export default class MainPage extends View {
 
     toggleThumbnailGallery() {
         document.querySelector('.c-slider_navigation-thumbnails').classList.toggle('is-open');
+        document.getElementById('js-thumbnail_gallery').classList.toggle('active');
+
     }
 
     handleNavigationButtonFullScreen() {
@@ -41,7 +43,7 @@ export default class MainPage extends View {
         else {
             this.controller.fetchImages(1);
             this.setState({ isLoadingNewPart: true });
-            document.querySelector('.c-mainpage_preloader').classList.add('is-open');
+            document.querySelector('.c-main_preloader').classList.add('is-open');
             //document.getElementById('js-header-part').textContent = "";
             document.querySelectorAll('.c-header_navigation li a')[1].innerHTML = '<span class="material-icons js-navigation_button">photo_library</span>';
             document.querySelector('.c-slider_navigation-overlay').classList.add('is-open');
@@ -52,14 +54,14 @@ export default class MainPage extends View {
         //this.controller.ajax.get(url).then(data => console.log(data));
         this.controller.fetchImages(5);
         this.setState({ isLoadingNewPart: true });
-        document.querySelector('.c-mainpage_preloader').classList.add('is-open');
+        document.querySelector('.c-main_preloader').classList.add('is-open');
         document.getElementById('js-header-part').textContent = "";
         document.querySelectorAll('.c-header_navigation li a')[1].innerHTML = 'Go Back <span class="material-icons">arrow_forward</span>';
     }
 
     setFooter() {
-        //TODO
-        //document.querySelector('')
+        const date = new Date();
+        document.querySelector('.c-footer_copyright span').innerHTML = date.getFullYear();
     }
 
     render() {

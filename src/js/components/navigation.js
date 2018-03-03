@@ -54,13 +54,13 @@ export default class Navigation extends View {
         document.querySelector('.l-main_page').classList.remove('is-open');
         document.querySelector('.js-navigation_button-full').classList.remove('is-open');
         document.querySelector('.l-main_navigation').classList.remove('is-open');
-        this.setState({ isNavOpen: false, isLoadingNewPart: true });
+        this.setState({ isNavOpen: false, isLoadingNewPart: true, isLoading: true });
 
-        document.querySelector('.c-mainpage_preloader').classList.add('is-open');
+        document.querySelector('.c-main_preloader').classList.add('is-open');
     }
 
     render() {
-        if (!this.model.state.isLoading) document.querySelector('.c-mainpage_preloader').classList.remove('is-open');
+        // if (!this.model.state.isLoading) document.querySelector('.c-main_preloader').classList.remove('is-open');
         if (this.model.state.navThumbnails.length && !this.model.state.isLoading && (this.model.state.currentPart !== this.model.state.loadedPart)) this.fillMainNavWithThumbnails();
     }
 }

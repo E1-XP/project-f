@@ -21,10 +21,7 @@
         </ul>
         <div class="l-main_page ">
             <div class="js-navigation_button-full"></div>
-            <!--preloader-->
-            <div class="c-mainpage_preloader">
-                <h2 class="c-preloader_text">0%</h2>
-            </div>
+            <div class="js-slider-dark"></div>
 
             <header class="c-main_header">
                 <h1 class="c-main_heading">
@@ -35,12 +32,12 @@
                 <nav class="c-header_navigation">
                     <ul class="c-navigation_list">
                         <li class="c-navigation_item">
-                            <a href="#" id="js-before-after">Before / After Special</a>
+                            <a href="#" class="c-item_link-beforeafter" id="js-before-after">Before / After Special</a>
                         </li>
                         <li class="c-navigation_item">
                             <span id="js-header-part">Part One /</span>
 
-                            <a href="#" id="js-change-section">
+                            <a href="#" class="c-item_link-changesection" id="js-change-section">
                                 <span class="material-icons js-navigation_button">photo_library</span>
                             </a>
                         </li>
@@ -55,6 +52,7 @@
                             <!--there will go images from ajax-->
                         </ul>
                         <nav class="c-slider_navigation-overlay is-open">
+                            <div class="c-slider_progressbar"></div>
                             <ul class="c-navigation_list">
                                 <li id="js-prev" class="c-navigation_item">
                                     <span class="material-icons">arrow_back</span>
@@ -79,44 +77,50 @@
                     </figure>
                 </div>
                 <section class="c-sliderinfo">
+                    <div class="c-sliderinfo_progressbar"></div>
                     <nav class="c-sliderinfo_navigation">
-                        <button id="js-thumbnail_gallery" class="js-sliderinfo_button">
-                            <span class="material-icons">grid_on</span>
-                        </button>
+                        <a href="#">
+                            <span id="js-thumbnail_gallery" id="js-sliderinfo_button" class="c-button material-icons">grid_on</span>
+                        </a>
                         <div class="c-sliderinfo_number">
                             <span>1</span>/27</div>
                     </nav>
-                    <p>Test</p>
+                    <p class="c-sliderinfo-figcaption">Test</p>
                     <div class="c-sliderinfo_likes">
-                        <span>99</span>
-                        <button class="c-button-likes" id="js-likes">+1</button>
+                        <div class="c-likes_text">
+                            <span>99</span> Likes
+                        </div>
+                        <a href="#">
+                            <span class="c-button-likes material-icons" id="js-likes">thumb_up</span>
+                        </a>
                     </div>
                 </section>
             </main>
             <footer class="l-main_footer">
                 <div class="c-footer_copyright">
-                    <p> &copy; 2017 GTxMotorsports. All rights reserved.</p>
+                    <p> &copy;
+                        <span>2018</span> GTxMotorsports. All rights reserved.</p>
                 </div>
                 <nav class="c-footer_social">
                     <ul class="c-navigation_list">
                         <li class="c-navigation_item">
-                            <a class="c-button-socialfb">
+                            <a href="#" class="c-button-socialfb">
                                 <span class="fab fa-facebook-f"></span>
                             </a>
                         </li>
                         <li class="c-navigation_item">
-                            <a class="c-button-socialtt">
+                            <a href="#" class="c-button-socialtt">
                                 <span class="fab fa-twitter"></span>
                             </a>
                         </li>
                         <li class="c-navigation_item">
-                            <a class="c-button-socialda">
+                            <a href="#" class="c-button-socialda">
                                 <span class="fab fa-deviantart"></span>
                             </a>
                         </li>
                         <li class="c-navigation_item">
-                            <a class="c-button-socialfb">
-                                <span class="fab fa-facebook-f"></span>
+                            <a href="#" class="c-button-socialfl">
+                                <span></span>
                             </a>
                         </li>
                     </ul>

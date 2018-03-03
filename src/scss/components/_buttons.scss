@@ -1,10 +1,20 @@
 .c-button {
     @extend .i1;
-    padding: .5em;
+    padding: .5rem;
     cursor: pointer;
+    color: $medGray;
+    background: $white;
     &:hover {
-        background-color: red;
+        opacity: .8;
     }
+}
+
+.c-button.active {
+    color: $attackYellow;
+}
+
+.c-button-likes {
+    @extend .c-button;
 }
 
 .c-button-social {
@@ -13,20 +23,43 @@
 
 .c-button-socialfb {
     @extend .c-button-social;
+    color: $white;
     background-color: #3b5999;
 }
 
 .c-button-socialtt {
     @extend .c-button-social;
+    color: $white;
     background-color: #55acee;
 }
 
 .c-button-socialda {
     @extend .c-button-social;
+    color: $white;
     background-color: #05cc47;
 }
 
 .c-button-socialfl {
     @extend .c-button-social;
-    background-color: #fff;
+    background-color: $white;
+    height: 100%;
+    display: flex;
+    justify-content: space-around !important;
+    align-items: center;
+    &:before {
+        content: "";
+        display: inline-block;
+        background-color: rgb(0, 106, 221);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+    &:after {
+        content: "";
+        display: inline-block;
+        background-color: rgb(244, 0, 131);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
 }

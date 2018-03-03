@@ -10,6 +10,8 @@ export default class Slider extends View {
         document.getElementById('js-next').addEventListener('click', this.nextSlide.bind(this));
         document.getElementById('js-stop-start').addEventListener('click', this.stopStartSlider.bind(this));
         document.getElementById('js-download').addEventListener('click', this.getFullImage.bind(this));
+        document.getElementById('js-resize').addEventListener('click', this.toggleSliderBackground.bind(this));
+        document.querySelector('.js-slider-dark').addEventListener('click', (e) => document.querySelector('.js-slider-dark').classList.remove('is-open'));
         document.getElementById('js-likes').addEventListener('click', this.setLike.bind(this));
 
         document.querySelector('.c-slider_navigation-thumbnails ul').addEventListener('click', (e) => {
@@ -20,7 +22,6 @@ export default class Slider extends View {
         document.querySelector('.c-image_list').addEventListener('mousedown', (e) => {
             if (e.target.classList.contains('c-button-drag')) this.enableResizableSlider(e);
         });
-
     }
 
     populateDOM() {
@@ -47,7 +48,7 @@ export default class Slider extends View {
             this.setState({ currentPart: Number(loadedPart), currentImage: 1 });
             this.setBackground(true, true);
             this.generateThumbnailNavigation();
-            this.stopStartSlider();
+            setTimeout(this.stopStartSlider.bind(this), 500);
         }
 
         else {
@@ -68,8 +69,7 @@ export default class Slider extends View {
                 li.appendChild(div);
                 i += 1;
             }
-            //const addClass = (idx > 0 && idx < ar.length - 1) ? "" : ((idx === 0) ? "active" : "back");
-            //JUST REPLACE IMAGES
+
             document.querySelector('.c-slider ul').innerHTML = "";
             document.querySelector('.c-slider ul').appendChild(li);
             // document.querySelector('.c-slider_resize').classList.add('is-open');
@@ -154,7 +154,9 @@ export default class Slider extends View {
         this.setBackground(true);
         this.setActiveThumbnail();
         this.getSlideNumber();
-        this.getLikes()
+        this.getLikes();
+        this.setNavigationProgressBar();
+        //this.toggleSliderProgressBar();
     }
 
     prevSlide() {
@@ -184,10 +186,20 @@ export default class Slider extends View {
         this.setActiveThumbnail();
         this.getSlideNumber();
         this.getLikes();
+        this.setNavigationProgressBar();
     }
 
     stopStartSlider() {
-        (this.model.state.isSliderRunning) ? (this.setState({ isSliderRunning: false }), clearInterval(window.sliderInterval)) : (this.setState({ isSliderRunning: true }), window.sliderInterval = setInterval(() => document.getElementById('js-next').click(), this.model.state.interval));
+        if (this.model.state.isSliderRunning) {
+            this.setState({ isSliderRunning: false });
+            clearInterval(window.sliderInterval);
+            //this.toggleSliderProgressBar(true);
+        }
+        else {
+            this.setState({ isSliderRunning: true });
+            window.sliderInterval = setInterval(() => document.getElementById('js-next').click(), this.model.state.interval);
+            this.toggleSliderProgressBar(false);
+        }
         const stopStartButtonDOM = document.getElementById('js-stop-start').firstElementChild;
         (this.model.state.isSliderRunning) ? stopStartButtonDOM.innerHTML = "stop" : stopStartButtonDOM.innerHTML = "play_arrow";
     }
@@ -203,9 +215,10 @@ export default class Slider extends View {
     setBackground(slideDirectionFlag, startMode = false) {
         const backgroundList = document.querySelectorAll('.l-main_page-background');
         const imageList = document.querySelectorAll('.c-slider_image .c-image_list li');
+        const { colors } = this.model.state;
 
         if (startMode) {
-            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${this.model.state.colors[0].rgb})`;
+            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${colors[0].DarkMuted._rgb.join(',')})`;
             return 0;
         }
 
@@ -221,8 +234,7 @@ export default class Slider extends View {
             else document.querySelector('.c-background_list .active').previousElementSibling.classList.add('back');
 
             const idx = Array.from(imageList).indexOf(document.querySelector('.c-slider_image .c-image_list .active'));
-
-            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${this.model.state.colors[idx].rgb})`;
+            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${colors[idx].DarkMuted._rgb.join(',')})`;
         }
 
         //back
@@ -246,30 +258,43 @@ export default class Slider extends View {
                 document.querySelector('.c-background_list .active').nextElementSibling.classList.add('back');
             }
             const idx = Array.from(imageList).indexOf(document.querySelector('.c-slider_image .c-image_list .active'));
-
-            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${this.model.state.colors[idx].rgb})`;
+            document.querySelector('.c-background_list .active').style.background = `linear-gradient(to top, #232526,rgb(${colors[idx].DarkMuted._rgb.join(',')})`;
         }
     }
 
+    toggleSliderBackground(e) {
+        document.querySelector('.js-slider-dark').classList.toggle('is-open');
+    }
+
+    toggleSliderProgressBar() {
+        const progressBar = document.querySelector('.c-slider_progressbar');
+        const { isSliderRunning } = this.model.state;
+        (isSliderRunning) ? progressBar.classList.add('is-open') : progressBar.classList.remove('is-open');
+        //setTimeout(() => document.querySelector('.c-slider_progressbar').classList.remove('is-open'), this.model.state.interval);
+    }
+
+    setNavigationProgressBar() {
+        const { currentImage } = this.model.state;
+        document.querySelector('.c-sliderinfo_progressbar').style.width = `${(Number(currentImage) / 27) * 100}%`;
+    }
+
     enableResizableSlider(e) {
-        console.log('just get called');
-        window.addEventListener('mousemove', startResizing);
-        window.addEventListener('mouseup', stopResizing);
 
-        function startResizing(e) {
-            console.log('startresizing');
+        const startResizing = (e) => {
             const div = document.querySelectorAll('.c-slider .c-image_list .c-imagediv')[1];
-
+            const maxWidth = document.querySelectorAll('.c-slider .c-image_list .c-imagediv')[0].offsetWidth;
             let dim = e.clientX - div.offsetLeft;
-            if (dim >= 0 && dim <= 800) div.style.width = (e.clientX - div.offsetLeft) + 'px';
+
+            if (dim >= 0 && dim <= maxWidth) div.style.width = (e.clientX - div.offsetLeft) + 'px';
         }
 
-        function stopResizing() {
-            console.log('stopped resizing');
-
+        const stopResizing = () => {
             window.removeEventListener('mousemove', startResizing);
             window.removeEventListener('mouseup', stopResizing);
         }
+
+        window.addEventListener('mousemove', startResizing);
+        window.addEventListener('mouseup', stopResizing);
     }
 
     getFullImage(e) {
@@ -281,7 +306,7 @@ export default class Slider extends View {
     }
 
     getLikes() {
-        document.querySelector('.c-sliderinfo_likes span').innerHTML = this.model.state.images[this.model.state.currentImage].likes;
+        document.querySelector('.c-sliderinfo_likes .c-likes_text span').innerHTML = this.model.state.images[this.model.state.currentImage].likes;
     }
 
     setLike() {
@@ -296,12 +321,13 @@ export default class Slider extends View {
             case 39: this.nextSlide(); break;
             case 37: this.prevSlide(); break;
             case 32: this.stopStartSlider(); break;
-            //TODO resize,navigation                
+            case 120: this.toggleSliderBackground(); break;
         }
     }
 
     render() {
         if (!this.model.state.isLoading && (this.model.state.currentPart !== this.model.state.loadedPart)) this.populateDOM();
         console.log('just rerendered.'); //if (this.model.state.isSliderRunning) this.stopStartSlider();
+        this.toggleSliderProgressBar();
     }
 }

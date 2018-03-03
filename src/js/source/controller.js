@@ -41,7 +41,7 @@ export default class Controller {
     fetchImages(n, fullscreen = false) {
         const imgCache = [];
         let loadedImgs = 0;
-        const loader = document.querySelector(`.c-${fullscreen ? 'main' : 'mainpage'}_preloader .c-preloader_text`);
+        const loader = document.querySelector(`.c-main_preloader .c-preloader_text`);
         const url = `https://boiling-citadel-14104.herokuapp.com/static/img/${n}`;
 
         this.ajax.get(url)
@@ -111,17 +111,18 @@ export default class Controller {
             fetchedImages.forEach((item, i) => {
                 Vibrant.from(item.dir.src)
                     .getPalette().then(result => {
-                        const rgb = result.DarkMuted._rgb.join(', ');
-                        colorArray.push({ i, rgb });
+                        // console.log(result);
+                        //const rgb = Object.keys(result).map(item => (result[item]) ? result[item]._rgb.join(', ') : null);
+                        colorArray.push({ i, rgb: result });
 
                         if (count === fetchedImages.length - 1) {
-                            console.log(colorArray);
+                            // console.log(colorArray);
                             //colorArray = colorArray.sort((a, b) => a.i - b.i);
                             //const images = fetchedImages.map((item2, idx) => {
                             //    console.log(idx);
                             //    return Object.assign(item2, { color: colorArray[idx].rgb });
                             // });
-                            res(colorArray.sort((a, b) => a.i - b.i));
+                            res(colorArray.sort((a, b) => a.i - b.i).map(item => item.rgb));
                         }
                         count += 1;
                     }).catch(err => console.log(err));

@@ -25,14 +25,13 @@
 .l-main_page-background {
     @extend .l-main_page;
     display: none;
-    z-index: 2;
-    background: darkturquoise;
-    &:nth-of-type(2) {
-        background: orangered;
-    }
-    &:last-of-type {
-        background: purple;
-    }
+    z-index: 2; // background: grey;
+    // &:nth-of-type(2) {
+    //     background: black;
+    // }
+    // &:last-of-type {
+    //     background: white;
+    // }
 }
 
 .l-main_page-background.active {
