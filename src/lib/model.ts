@@ -25,6 +25,7 @@ export interface IvDOMLevel {
 export class Model extends EventEmitter implements IModel {
   private isInitialized = false;
   private domCount = 0;
+  private vDOM: any = {};
   state = {};
 
   constructor() {
@@ -61,5 +62,46 @@ export class Model extends EventEmitter implements IModel {
     const tmpId = this.domCount;
     this.domCount += 1;
     return tmpId;
+  }
+
+  getVDOM() {
+    return this.vDOM;
+  }
+
+  findVDOMNode(instance: IComponent, vDOM: IvDOMLevel): IvDOMItem | undefined {
+    const keys = Object.keys(vDOM);
+    const foundKey = keys.find(key => vDOM[key].ref === instance);
+
+    console.log(foundKey, vDOM, "FK");
+
+    if (!keys.length) return;
+    if (foundKey) return vDOM[foundKey];
+
+    return keys.map(key => this.findVDOMNode(instance, vDOM[key].children))[0];
+  }
+
+  appendToVDOM(ref: IComponent, parentRef?: IComponent) {
+    if (!Object.keys(this.vDOM).length || parentRef === undefined) {
+      this.vDOM[ref.domId] = { ref, children: {} };
+      return;
+    }
+
+    const foundItem = this.findVDOMNode(parentRef, this.vDOM);
+    if (!foundItem) {
+      console.log(this.vDOM);
+      throw new Error(`vDOM item (${parentRef.constructor.name}) not found`);
+    }
+
+    foundItem.children[ref.domId] = { ref, children: {} };
+  }
+
+  clearVDOMBranch(rootRef: IComponent) {
+    const foundItem = this.findVDOMNode(rootRef, this.vDOM);
+    if (!foundItem) {
+      console.log(this.vDOM);
+      throw new Error(`vDOM item (${rootRef.constructor.name}) not found`);
+    }
+
+    foundItem.children = {};
   }
 }
