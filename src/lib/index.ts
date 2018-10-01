@@ -33,11 +33,56 @@ export const run = (component: any, parentInstance?: IComponent): string => {
 
 export const html = (markup: TemplateStringsArray, ...values: any[]) => {
   const template = document.createElement("template");
+
+  const reducedArray = (arr: string[]) =>
+    arr.reduce((acc, itm) => acc + itm, "");
+
   template.innerHTML = markup
-    .map((str, i) => `${str}${values[i] || ""}`)
+    .map(
+      (str, i) =>
+        `${str}${
+          Array.isArray(values[i]) ? reducedArray(values[i]) : values[i] || ""
+        }`
+    )
     .join("");
   // you can append templates from values arr here
   return template;
+};
+
+export const rerender = (instance: IComponent) => {
+  instance.onUnmount();
+  console.log("RERENDERING ", instance);
+
+  const model = container.get<Model>(types.Model);
+
+  const vDOM = model.getVDOM();
+  const vDOMNode = model.findVDOMNode(instance, vDOM);
+  console.log(vDOM, vDOMNode, instance, "VDOM, FOUND NODE,instance");
+  const vDOMChildren = vDOMNode ? vDOMNode.children : {};
+
+  Object.keys(vDOMChildren).forEach(key =>
+    model.unsubscribe(vDOMChildren[key].ref)
+  );
+  model.clearVDOMBranch(instance);
+
+  const template: any = instance.render().content;
+  template.firstElementChild.setAttribute("data-id", instance.domId);
+
+  const tmpElem = document.createElement("div");
+  tmpElem.appendChild(template);
+
+  const mountedElem: any = document.querySelector(
+    `[data-id='${instance.domId}']`
+  );
+
+  console.log(
+    // document.body.innerHTML,
+    mountedElem,
+    "in rerender: body html, mountedElem"
+  );
+  mountedElem.parentElement.innerHTML = tmpElem.innerHTML;
+
+  instance.onUpdate();
 };
 
 export const renderToDOM = (app: IComponent, htmlContainer: HTMLElement) => {
