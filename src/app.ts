@@ -8,7 +8,6 @@ import { Component } from "./lib/component";
 
 import { Preloader } from "./components/preloader";
 import { Page } from "./components/page";
-import { Navigation } from "./components/navigation";
 
 export class App extends Component {
   props = ["isLoading"];

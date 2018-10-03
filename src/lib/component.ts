@@ -22,6 +22,7 @@ export class Component implements IComponent {
   constructor(@inject(types.Model) model: IModel) {
     this.model = model;
     this.domId = this.model.getDomId();
+    console.log(this.constructor.name, "has id=", this.domId);
   }
 
   onMount() {}
