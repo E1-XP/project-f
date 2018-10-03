@@ -45,7 +45,7 @@ export const html = (markup: TemplateStringsArray, ...values: any[]) => {
         }`
     )
     .join("");
-  // you can append templates from values arr here
+
   return template;
 };
 
@@ -54,15 +54,15 @@ export const rerender = (instance: IComponent) => {
   console.log("RERENDERING ", instance);
 
   const model = container.get<Model>(types.Model);
-
   const vDOM = model.getVDOM();
+
   const vDOMNode = model.findVDOMNode(instance, vDOM);
   console.log(vDOM, vDOMNode, instance, "VDOM, FOUND NODE,instance");
   const vDOMChildren = vDOMNode ? vDOMNode.children : {};
 
-  Object.keys(vDOMChildren).forEach(key =>
-    model.unsubscribe(vDOMChildren[key].ref)
-  );
+  Object.keys(vDOMChildren).forEach(key => {
+    model.unsubscribe(vDOMChildren[key].ref);
+  });
   model.clearVDOMBranch(instance);
 
   const template: any = instance.render().content;
@@ -74,14 +74,14 @@ export const rerender = (instance: IComponent) => {
   const mountedElem: any = document.querySelector(
     `[data-id='${instance.domId}']`
   );
-
-  console.log(
-    // document.body.innerHTML,
-    mountedElem,
-    "in rerender: body html, mountedElem"
-  );
+  console.log(document.body.innerHTML, instance.domId, "-mountedelem id");
+  // console.log(
+  //   // document.body.innerHTML,
+  //   mountedElem,
+  //   "in rerender: body html, mountedElem"
+  // );
   mountedElem.parentElement.innerHTML = tmpElem.innerHTML;
-
+  // component constructed if
   instance.onUpdate();
 };
 

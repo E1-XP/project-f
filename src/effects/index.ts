@@ -1,13 +1,18 @@
 import "whatwg-fetch";
+const vibrant: any = require("node-vibrant");
 
 import { container } from "./../lib/IOC";
 import { types } from "./../lib/IOC/types";
 import { Model } from "./../lib/model";
 import { State } from "./../store";
+
 const URL = `https://boiling-citadel-14104.herokuapp.com`;
 
 interface ImageData {
   dir: string;
+  thumbnail: string;
+  id: number;
+  likes: number;
 }
 
 interface Response {
@@ -19,24 +24,35 @@ export const getImages = (part: number) =>
     .then((resp: any) => resp.json())
     .then(({ images }: Response) => {
       const model = container.get<Model>(types.Model);
-      const imageCache: HTMLImageElement[] = [];
+      const extractedColors: any[] = [];
       let counter = 0;
-      // setInterval(() => model.setState({ loadStatus: (counter += 1) }), 1500);
 
       const onLoad = (e: any) => {
         counter += 1;
         const loadStatus = Math.floor((counter / images.length) * 100);
-        const state: Partial<State> = { loadStatus, imageCache };
 
-        if (loadStatus === 100) state.isLoading = false;
+        const state: Partial<State> = {
+          loadStatus,
+          extractedColors
+        };
+
+        if (loadStatus === 100) {
+          Object.assign(state, { images, isLoading: false });
+        }
+
         model.setState(state);
+        console.log(model.getState(), "MS");
       };
 
       images.map(image => {
         const img = new Image();
         img.src = `${URL}/${image.dir}`;
-        imageCache.push(img);
 
         img.addEventListener("load", onLoad);
+
+        vibrant
+          .from(img.src)
+          .getPalette()
+          .then((result: any) => extractedColors.push(result));
       });
     });

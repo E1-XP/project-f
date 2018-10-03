@@ -98,7 +98,7 @@ export class Model extends EventEmitter implements IModel {
   clearVDOMBranch(rootRef: IComponent) {
     const foundItem = this.findVDOMNode(rootRef, this.vDOM);
     if (!foundItem) {
-      console.log(this.vDOM);
+      // console.log(this.vDOM);
       throw new Error(`vDOM item (${rootRef.constructor.name}) not found`);
     }
 
