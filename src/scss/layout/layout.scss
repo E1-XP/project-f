@@ -1,12 +1,13 @@
 .container {
-    overflow: hidden;
-    background-color: $lightGray;
-    position: relative;
+  overflow: hidden;
+  background-color: $lightGray;
+  position: relative;
 }
 
 .l-page_container {
-    max-width: 1400px;
-    margin: 0 auto;
-    z-index: 5;
-    position: relative;
+  max-width: 1400px;
+  width: 97%;
+  margin: 1rem auto;
+  z-index: 5;
+  position: relative;
 }

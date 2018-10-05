@@ -1,26 +1,31 @@
 .page_header {
-    //   border: 1px solid red;
-    height: 400px;
     display: flex;
     justify-content: space-between;
-}
-
-.page_header__background {
-    background-image: url("https://www.imageupload.co.uk/images/2018/09/28/WECS15a3.png");
-    height: 100%;
-    background-repeat: no-repeat;
-    background-size: cover;
-    width: 75%;
-    max-width: 620px;
-    background-position: 0px -195px;
-    float: right;
-    margin-right: -5%; // &:before {
-    // }
-}
-
-.page_header__logo {
-    padding: 1rem;
-    img {
-        width: 14rem;
+    .page_header__logo {
+        margin: 0;
+        img {
+            height: 1.7rem;
+        }
+    }
+    .page_header__navigation {
+        display: flex;
+        width: 22rem;
+        font-size: 20px;
+        .navigation__list {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            .navigation__item {
+                &:last-of-type {
+                    display: flex;
+                    align-items: center;
+                    a {
+                        display: flex;
+                        align-items: center;
+                    }
+                }
+            }
+        }
     }
 }

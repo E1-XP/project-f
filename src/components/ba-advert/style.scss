@@ -1,5 +1,4 @@
 .ba_advert {
-  width: 90%;
   height: 250px;
   border: 1px solid black;
   border-radius: 2px;
@@ -24,6 +23,7 @@
   &__button {
     font-weight: 500;
     font-size: 20px;
+    color: black;
     background-color: aliceblue;
     border: 2px solid black;
     margin: 0;
@@ -31,5 +31,11 @@
     border-radius: 2px;
     margin-left: 4rem;
     margin-top: 0rem;
+    &:hover {
+      color: white;
+      background-color: black;
+      border: 2px solid white;
+      transition: 0.2s all ease-in-out;
+    }
   }
 }
