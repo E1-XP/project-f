@@ -9,6 +9,7 @@ export class Footer extends Component {
             <p class="page_footer__text">
                 &copy ${new Date().getFullYear()} GTxmotorsports. All rights reserved.
             </p>
+            <button>To Top</button>
         </section>
     `;
   }

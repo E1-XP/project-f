@@ -44,7 +44,7 @@ export const getImages = (part: number) =>
         console.log(model.getState(), "MS");
       };
 
-      images.map(image => {
+      images.sort((a, b) => a.id - b.id).map(image => {
         const img = new Image();
         img.src = `${URL}/${image.dir}`;
 

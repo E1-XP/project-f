@@ -31,9 +31,14 @@ export class App extends Component {
   render(): HTMLTemplateElement {
     const state = this.model.getState();
 
+    // return html`
+    //     <div class="container">
+    //         ${run(Page, this)}
+    //     </div>`;
+
     return html`
         <div class="container">
-           ${state.isLoading ? run(Preloader, this) : run(Page, this)}
+            ${state.isLoading ? run(Preloader, this) : run(Page, this)}
         </div>`;
   }
 }

@@ -74,13 +74,18 @@ export const rerender = (instance: IComponent) => {
   const mountedElem: any = document.querySelector(
     `[data-id='${instance.domId}']`
   );
-  console.log(document.body.innerHTML, instance.domId, "-mountedelem id");
   // console.log(
-  //   // document.body.innerHTML,
-  //   mountedElem,
-  //   "in rerender: body html, mountedElem"
+  //   document.body.innerHTML,
+  //   instance,
+  //   instance.domId,
+  //   "-mountedElem id"
   // );
-  mountedElem.parentElement.innerHTML = tmpElem.innerHTML;
+
+  console.log(mountedElem, mountedElem.parentElement);
+  mountedElem.parentElement.replaceChild(
+    tmpElem.firstElementChild,
+    mountedElem
+  );
   // component constructed if
   instance.onUpdate();
 };
