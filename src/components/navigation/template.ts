@@ -1,6 +1,10 @@
 import { html } from "./../../lib";
 
-export default () => html`
+import { Props } from "./index";
+
+export default ({ getMenuItems }: Props) => html`
     <div class="page_menu">
-        nav
+        <ul class="page_menu__list">
+            ${getMenuItems()}
+        </ul>
     </div>`;

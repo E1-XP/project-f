@@ -1,6 +1,8 @@
 import { html } from "./../../lib";
 
-export default () => html`
+import { Props } from "./index";
+
+export default ({ getPartName }: Props) => html`
     <header class="page_header">
             <h1 class="page_header__logo">
                 <a href="/">
@@ -13,8 +15,8 @@ export default () => html`
                             <a href="/ba" id="js-before-after">Before / After Special</a>
                         </li>
                         <li class="navigation__item">
-                            <span id="js-header-part">Part One /</span>
-                            <a href="/menu" id="js-change-section">
+                            <span id="js-header-part">${getPartName()} /</span>
+                            <a href="#" id="js-change-section">
                                 <span class="material-icons">photo_library</span>
                             </a>
                         </li>
