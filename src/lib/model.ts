@@ -21,12 +21,16 @@ export interface IvDOMLevel {
   [key: string]: IvDOMItem;
 }
 
+interface EmptyState {
+  [key: string]: any;
+}
+
 @injectable()
 export class Model extends EventEmitter implements IModel {
   private isInitialized = false;
   private domCount = 0;
   private vDOM: any = {};
-  state = {};
+  state: EmptyState = {};
 
   constructor() {
     super();
@@ -52,8 +56,17 @@ export class Model extends EventEmitter implements IModel {
   }
 
   setState(updatedS: Partial<State>) {
+    const noStateChanges = Object.entries(updatedS).every(
+      itm => this.state[itm[0]] === itm[1]
+    );
+
+    if (noStateChanges) return this.state;
+
     this.state = Object.assign({}, this.state, updatedS);
+
     this.emit(Object.keys(updatedS));
+
+    console.log("UPDATED STATE:", this.state);
 
     return this.state;
   }
@@ -61,6 +74,7 @@ export class Model extends EventEmitter implements IModel {
   getDomId() {
     const tmpId = this.domCount;
     this.domCount += 1;
+
     return tmpId;
   }
 
@@ -95,11 +109,12 @@ export class Model extends EventEmitter implements IModel {
     foundItem.children[ref.domId] = { ref, children: {} };
   }
 
-  clearVDOMBranch(rootRef: IComponent) {
-    const foundItem = this.findVDOMNode(rootRef, this.vDOM);
+  clearVDOMBranch(ref: IComponent) {
+    const foundItem = this.findVDOMNode(ref, this.vDOM);
     if (!foundItem) {
       // console.log(this.vDOM);
-      throw new Error(`vDOM item (${rootRef.constructor.name}) not found`);
+      console.log(ref, "check");
+      throw new Error(`vDOM item (${ref.constructor.name}) not found`);
     }
 
     foundItem.children = {};

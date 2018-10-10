@@ -32,9 +32,12 @@ export class EventEmitter implements IEventEmitter {
   emit(propKeys: string[]) {
     console.log("RUN EMIT aka STATE CHANGED", this.listeners);
     // only if props match
-    this.listeners.forEach(({ ref, props }) => {
-      if (ref.props.some(key => propKeys.includes(key))) {
-        rerender(ref);
+    this.listeners.forEach(itm => {
+      const { ref, props } = itm;
+
+      if (props.some(key => propKeys.includes(key))) {
+        // listeners is modified during loop run so check if still exist here
+        this.listeners.includes(itm) && ref.shouldUpdate() && rerender(ref);
       }
     });
   }

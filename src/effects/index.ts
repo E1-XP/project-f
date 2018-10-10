@@ -20,7 +20,7 @@ interface Response {
 }
 
 export const getImages = (part: number) =>
-  fetch(`${URL}/static/img/${1}`)
+  fetch(`${URL}/static/img/${part}`)
     .then((resp: any) => resp.json())
     .then(({ images }: Response) => {
       const model = container.get<Model>(types.Model);
@@ -37,7 +37,8 @@ export const getImages = (part: number) =>
         };
 
         if (loadStatus === 100) {
-          Object.assign(state, { images, isLoading: false });
+          console.log("LOAD IMAGES COMPLETED");
+          Object.assign(state, { images, isLoading: false, loadStatus: 0 });
         }
 
         model.setState(state);

@@ -1,11 +1,54 @@
 .page_menu {
-    /* background-color: #727272;
-    background: radial-gradient(rgb(114, 114, 114), rgb(56, 56, 56)); */
-    background-color: #90a4ae;
-    width: 100vw;
-    height: 100vh;
-    max-width: 100%;
-    font-family: "Faster One", cursive;
-    color: #fff;
-    font-size: 19rem;
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  &__list {
+    display: flex;
+    flex-direction: column;
+    height: 77vh;
+    transform: translateX(67vw) translateY(13vh) rotateY(-15deg);
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    min-height: 35rem;
+    justify-content: center;
+  }
+  .list__item {
+    flex-basis: 33%;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease-in-out;
+    }
+    span {
+      font-family: "Faster One", cursive;
+      font-size: 11rem;
+      transform: translateZ(0deg);
+      -webkit-text-fill-color: transparent;
+      padding: 0px 1rem 0px 3.2rem;
+    }
+    &:first-of-type span {
+      background-position: right 17% bottom 10% !important;
+      background-size: 337% !important;
+      background-clip: text !important;
+      -webkit-background-clip: text !important;
+    }
+    &:nth-of-type(2) span {
+      background-position: right 22% bottom -1% !important;
+      background-size: 365% !important;
+      background-clip: text !important;
+      -webkit-background-clip: text !important;
+    }
+    &:nth-of-type(3) span {
+      background-position: right 64% bottom 6% !important;
+      background-size: 373% !important;
+      background-clip: text !important;
+      -webkit-background-clip: text !important;
+    }
+    &:last-of-type span {
+      background-position: right 99% bottom 86% !important;
+      background-size: 266% !important;
+      background-clip: text !important;
+      -webkit-background-clip: text !important;
+    }
+  }
 }

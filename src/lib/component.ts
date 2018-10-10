@@ -9,6 +9,7 @@ export interface IComponent {
   onMount: () => void;
   onUnmount: () => void;
   onUpdate: () => void;
+  shouldUpdate:()=>boolean;
   render: () => HTMLTemplateElement;
 }
 
@@ -30,6 +31,10 @@ export class Component implements IComponent {
   onUnmount() {}
 
   onUpdate() {}
+
+  shouldUpdate(){
+    return true;
+  }
 
   render() {
     return document.createElement("template");

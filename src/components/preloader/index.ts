@@ -9,11 +9,13 @@ export interface Props {
 }
 
 export class Preloader extends Component {
-  props = ["loadStatus"];
+  props = ["loadStatus", "currentPart"];
 
-  onMount() {
-    effects.getImages(1);
-  }
+  onMount = () => {
+    const { currentPart } = this.model.getState();
+    currentPart !== undefined && effects.getImages(currentPart);
+  };
+
   render() {
     const state = <State>this.model.getState();
     const { loadStatus } = state;
