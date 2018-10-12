@@ -20,18 +20,17 @@ export class Slider extends Component {
   nextBtn: HTMLElement | null = null;
 
   onMount = () => {
-    this.backBtn = document.getElementById("js-slider__back");
-    this.stopStartBtn = document.getElementById("js-slider__stop");
-    this.getFullSizeBtn = document.getElementById("js-slider__getimg");
-    this.nextBtn = document.getElementById("js-slider__next");
+    this.backBtn = document.getElementById("js-slider-back");
+    this.stopStartBtn = document.getElementById("js-slider-stop");
+    this.getFullSizeBtn = document.getElementById("js-slider-getimg");
+    this.nextBtn = document.getElementById("js-slider-next");
 
     this.slides = Array.from(document.querySelectorAll(".image_slider img"));
 
     if (
       !this.backBtn ||
       !this.stopStartBtn ||
-      !this.nextBtn ||
-      false
+      !this.nextBtn
       // !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
@@ -43,6 +42,7 @@ export class Slider extends Component {
     this.nextBtn.addEventListener("click", this.nextSlide);
 
     document.addEventListener("keydown", this.enableKeySteering);
+    this.addThumbnailListeners();
     // this.stopStartSlider();
   };
 
@@ -54,8 +54,7 @@ export class Slider extends Component {
     if (
       !this.backBtn ||
       !this.stopStartBtn ||
-      !this.nextBtn ||
-      false
+      !this.nextBtn
       // !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
@@ -67,6 +66,7 @@ export class Slider extends Component {
     this.nextBtn.removeEventListener("click", this.nextSlide);
 
     document.removeEventListener("keydown", this.enableKeySteering);
+    this.removeThumbnailListeners();
   };
 
   nextSlide = () => {
@@ -152,6 +152,34 @@ export class Slider extends Component {
     );
   };
 
+  addThumbnailListeners = () => {
+    const domRefs = document.querySelectorAll(
+      ".image_slider__navigation .item__cover"
+    );
+
+    domRefs &&
+      Array.from(domRefs).forEach(ref => {
+        ref.addEventListener("click", this.handleThumbnailClick);
+      });
+  };
+
+  removeThumbnailListeners = () => {
+    const domRefs = document.querySelectorAll(
+      ".image_slider__navigation .item__cover"
+    );
+
+    domRefs &&
+      Array.from(domRefs).forEach(ref => {
+        ref.removeEventListener("click", this.handleThumbnailClick);
+      });
+  };
+
+  handleThumbnailClick = (e: any) => {
+    const currentSlide = Number(e.target.closest("li").dataset.idx);
+
+    this.model.setState({ currentSlide });
+  };
+
   getThumbnails = () => {
     const { images, currentSlide } = this.model.getState();
     const URL = `https://boiling-citadel-14104.herokuapp.com`;
@@ -163,7 +191,7 @@ export class Slider extends Component {
     return images.map(
       (itm, idx) => `<li class="navigation__item${
         isImgActive(idx) ? " active" : ""
-      }">
+      }" data-idx=${idx}>
       <img src="${URL}/${itm.thumbnail}" alt="gallery thumbnail">
       <span class="item__cover"></span>
     </li>`
@@ -171,8 +199,7 @@ export class Slider extends Component {
   };
 
   render(): HTMLTemplateElement {
-    const state = this.model.getState();
-    const { images, currentSlide } = state;
+    const { images, currentSlide } = this.model.getState();
 
     return template({
       images,

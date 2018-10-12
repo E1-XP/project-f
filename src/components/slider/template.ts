@@ -14,10 +14,10 @@ export default ({
             ${images && getImageList()}
             </ul> 
             <nav class="content__navigation">
-                <div class="navigation__button--left" id="js-slider__back">
+                <div class="navigation__button--left" id="js-slider-back">
                     <span class="material-icons icon">arrow_back_ios</span>
                 </div>
-                <div class="navigation__button--stop" id="js-slider__stop">
+                <div class="navigation__button--stop" id="js-slider-stop">
                     <span class="material-icons icon">pause</span>
                 </div>
                 <!-- <div class="navigation__button--stop" id="js-slider__getimg">
@@ -26,7 +26,7 @@ export default ({
                   <!-- <div class="navigation__button--stop" id="js-slider__fullscreen">
                     <span class="material-icons icon">pause</span>
                 </div> -->
-                <div class="navigation__button--right" id="js-slider__next">
+                <div class="navigation__button--right" id="js-slider-next">
                     <span class="material-icons icon">arrow_forward_ios</span>
                 </div>
             </nav>

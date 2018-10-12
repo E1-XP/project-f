@@ -1,151 +1,139 @@
 @keyframes fadeAnim {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 .image_slider {
-  margin: 1rem auto;
-  &__content {
-    background-color: #333;
-    margin: 0 auto;
-    position: relative;
-    padding-bottom: 56.25%;
-    box-shadow: -1px 3px 15px 0px rgba(12, 12, 12, 0.6);
-  }
-  &__info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .info__description {
-      text-align: center;
-    }
-    .info__likes {
-      display: flex;
-      .likes__count {
-      }
-      .likes__button {
-      }
-    }
-  }
-  &__navigation {
-    width: 99%;
     margin: 1rem auto;
-    .navigation__list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: center;
-      .navigation__item {
+    &__content {
+        background-color: #333;
+        margin: 0 auto;
         position: relative;
-        flex-basis: 33%;
-        overflow: hidden;
-        border-radius: 1%;
+        padding-bottom: 56.25%;
         box-shadow: -1px 3px 15px 0px rgba(12, 12, 12, 0.6);
-        img {
-          width: 100%;
-          filter: grayscale(100%);
+    }
+    &__info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .info__description {
+            text-align: center;
         }
-        .item__cover {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          display: block;
-          background-color: $attackYellow;
-          opacity: 0;
-          &:hover {
-            opacity: 0.5;
-          }
+        .info__likes {
+            display: flex;
+            .likes__count {}
+            .likes__button {}
         }
-      }
     }
-  }
-  .content__list {
-  }
-  .content__item {
-    img {
-      position: absolute;
-      width: 100%;
-      display: none;
-      top: 0;
-      left: 0;
-      border: 1.5px solid black;
+    &__navigation {
+        width: 99%;
+        margin: 1rem auto;
+        .navigation__list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            .navigation__item {
+                position: relative;
+                flex-basis: 33%;
+                overflow: hidden;
+                border-radius: 1%;
+                box-shadow: -1px 3px 15px 0px rgba(12, 12, 12, 0.6);
+                img {
+                    width: 100%;
+                    filter: grayscale(100%);
+                }
+                .item__cover {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    background-color: $attackYellow;
+                    opacity: 0;
+                    &:hover {
+                        opacity: 0.5;
+                    }
+                }
+                &.active .item__cover {
+                    opacity: 0.5;
+                }
+            }
+        }
     }
-  }
-  .active img {
-    display: inline-block;
-    z-index: 100;
-    animation: fadeAnim 0.5s 0s;
-  }
-  .back img {
-    display: inline-block;
-    z-index: 50;
-  }
-  .content__navigation {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    z-index: 101;
-    display: flex;
-    justify-content: space-between;
-    &:hover .navigation__button,
-    &:hover .navigation__button--stop {
-      opacity: 0.1;
+    .content__list {
+        .content__item {
+            img {
+                position: absolute;
+                width: 100%;
+                display: none;
+                top: 0;
+                left: 0;
+                border: 1.5px solid black;
+            }
+        }
+        .active img {
+            display: inline-block;
+            z-index: 100;
+            animation: fadeAnim 0.5s 0s;
+        }
+        .back img {
+            display: inline-block;
+            z-index: 50;
+        }
     }
-    .navigation__button {
-      height: 100%;
-      width: 12.5%;
-      display: flex;
-      align-items: center;
-      padding: 1rem;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-      &:hover {
-        opacity: 0.5;
-      }
+    .content__navigation {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 101;
+        display: flex;
+        justify-content: space-between;
+        &:hover .navigation__button,
+        &:hover .navigation__button--stop {
+            opacity: 0.1;
+        }
+        .navigation__button {
+            height: 100%;
+            width: 12.5%;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            &:hover {
+                opacity: 0.5;
+            }
+        }
+        .navigation__button--left {
+            @extend .navigation__button;
+            background: linear-gradient( to right, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+        .navigation__button--right {
+            @extend .navigation__button;
+            justify-content: flex-end;
+            background: linear-gradient( to left, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+        .navigation__button--stop {
+            height: 12%;
+            width: 10%;
+            margin-bottom: 1rem;
+            align-self: flex-end;
+            display: flex;
+            justify-content: center;
+            opacity: 0;
+            cursor: pointer;
+            background: radial-gradient( ellipse at center, #000000 0%, rgba(13, 13, 13, 0.2) 0%, rgba(0, 0, 0, 0) 58%);
+            transition: opacity 0.3s ease-in-out;
+            &:hover {
+                opacity: 0.5;
+            }
+        }
     }
-    .navigation__button--left {
-      @extend .navigation__button;
-      background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.45) 0%,
-        rgba(0, 0, 0, 0) 100%
-      );
-    }
-    .navigation__button--right {
-      @extend .navigation__button;
-      justify-content: flex-end;
-      background: linear-gradient(
-        to left,
-        rgba(0, 0, 0, 0.45) 0%,
-        rgba(0, 0, 0, 0) 100%
-      );
-    }
-    .navigation__button--stop {
-      height: 12%;
-      width: 10%;
-      margin-bottom: 1rem;
-      align-self: flex-end;
-      display: flex;
-      justify-content: center;
-      opacity: 0;
-      cursor: pointer;
-      background: radial-gradient(
-        ellipse at center,
-        #000000 0%,
-        rgba(13, 13, 13, 0.2) 0%,
-        rgba(0, 0, 0, 0) 58%
-      );
-      transition: opacity 0.3s ease-in-out;
-      &:hover {
-        opacity: 0.5;
-      }
-    }
-  }
 }

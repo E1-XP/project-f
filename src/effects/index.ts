@@ -4,7 +4,6 @@ const vibrant: any = require("node-vibrant");
 import { container } from "./../lib/IOC";
 import { types } from "./../lib/IOC/types";
 import { Model } from "./../lib/model";
-import { State } from "./../store";
 
 const URL = `https://boiling-citadel-14104.herokuapp.com`;
 
@@ -31,17 +30,20 @@ export const getImages = (part: number) =>
         counter += 1;
         const loadStatus = Math.floor((counter / images.length) * 100);
 
-        const state: Partial<State> = {
-          loadStatus,
-          extractedColors
-        };
-
         if (loadStatus === 100) {
           console.log("LOAD IMAGES COMPLETED");
-          Object.assign(state, { images, isLoading: false, loadStatus: 0 });
+
+          model.setState({
+            images,
+            extractedColors,
+            isLoading: false,
+            loadStatus: 0
+          });
+
+          return;
         }
 
-        model.setState(state);
+        model.setState({ loadStatus });
         console.log(model.getState(), "MS");
       };
 

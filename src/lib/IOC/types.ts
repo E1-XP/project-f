@@ -1,4 +1,5 @@
 export const types = {
   Component: Symbol.for("Component"),
-  Model: Symbol.for("Model")
+  Model: Symbol.for("Model"),
+  Router: Symbol.for("Router")
 };
