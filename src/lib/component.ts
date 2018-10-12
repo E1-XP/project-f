@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { types } from "./IOC/types";
 import { IModel } from "./model";
+import { Router } from "./router";
 
 export interface IComponent {
   props: string[];
@@ -9,21 +10,22 @@ export interface IComponent {
   onMount: () => void;
   onUnmount: () => void;
   onUpdate: () => void;
-  shouldUpdate:()=>boolean;
+  shouldUpdate: () => boolean;
   render: () => HTMLTemplateElement;
 }
 
 @injectable()
 export class Component implements IComponent {
   model: IModel;
+  router: Router;
   domId: number;
   props: string[] = [];
   // template ?
 
-  constructor(@inject(types.Model) model: IModel) {
+  constructor(@inject(types.Model) model: IModel, router: Router) {
     this.model = model;
+    this.router = router;
     this.domId = this.model.getDomId();
-    console.log(this.constructor.name, "has id=", this.domId);
   }
 
   onMount() {}
@@ -32,7 +34,7 @@ export class Component implements IComponent {
 
   onUpdate() {}
 
-  shouldUpdate(){
+  shouldUpdate() {
     return true;
   }
 

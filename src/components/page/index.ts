@@ -5,6 +5,7 @@ import template from "./template";
 export interface Props {
   parentRef: IComponent;
   isMenuOpen: boolean | undefined;
+  currentPart: number | undefined;
 }
 
 export class Page extends Component {
@@ -37,8 +38,8 @@ export class Page extends Component {
   };
 
   render(): HTMLTemplateElement {
-    const { isMenuOpen } = this.model.getState();
+    const { isMenuOpen, currentPart } = this.model.getState();
 
-    return template({ isMenuOpen, parentRef: this });
+    return template({ isMenuOpen, currentPart, parentRef: this });
   }
 }

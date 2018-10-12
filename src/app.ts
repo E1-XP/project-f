@@ -11,11 +11,6 @@ export class App extends Component {
   render(): HTMLTemplateElement {
     const { isLoading } = this.model.getState();
 
-    // return html`
-    //     <div class="container">
-    //         ${run(Page, this)}
-    //     </div>`;
-
     return html`
         <div class="container">
             ${isLoading ? run(Preloader, this) : run(Page, this)}

@@ -15,7 +15,7 @@ export interface IEventEmitter {
 }
 
 @injectable()
-export class EventEmitter implements IEventEmitter {
+export abstract class EventEmitter implements IEventEmitter {
   listeners: Listener[] = [];
 
   subscribe(ref: IComponent) {
