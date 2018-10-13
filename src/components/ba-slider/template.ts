@@ -18,7 +18,7 @@ export default ({
              <div class="info__slide_count">
                 ${images &&
                   currentSlide !== undefined &&
-                  currentSlide + 1 + " / " + images.length / 2}
+                  currentSlide / 2 + 1 + " / " + images.length / 2}
             </div>
             <p class="info__description">test description</p>
                 <button>

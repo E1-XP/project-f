@@ -35,7 +35,7 @@ export const run = (component: any, parentInstance?: IComponent): string => {
   const model = container.get<Model>(types.Model);
   const router = container.get<Router>(types.Router);
 
-  const instance = new component(model,router);
+  const instance = new component(model, router);
 
   model.subscribe(instance);
   console.log(`${instance.constructor.name} Mounted`);
