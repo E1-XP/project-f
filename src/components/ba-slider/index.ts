@@ -47,7 +47,20 @@ export class CompareSlider extends Component {
   };
 
   onMouseDown = (e: any) => {
-    console.log(e.pageY);
+    const throttle = (fn: any, delay: number) => {
+      let isThrottled = false;
+
+      return (...args: any[]) => {
+        if (!isThrottled) {
+          fn(...args);
+          isThrottled = true;
+          setTimeout(() => (isThrottled = false), delay);
+        }
+      };
+    };
+
+    this.onMouseMove = throttle(this.onMouseMove, 10);
+
     window.addEventListener("mousemove", this.onMouseMove);
     window.addEventListener("mouseup", this.onMouseUp);
   };
@@ -136,7 +149,11 @@ export class CompareSlider extends Component {
     const { images, currentSlide } = this.model.getState();
     const URL = `https://boiling-citadel-14104.herokuapp.com`;
 
-    const isImgActive = (idx: number) => currentSlide === idx;
+    if (currentSlide === undefined || !images) {
+      throw new Error("state sync error");
+    }
+
+    const isImgActive = (idx: number) => currentSlide + 1 === idx;
 
     if (!images) return "";
 
