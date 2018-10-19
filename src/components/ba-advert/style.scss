@@ -1,41 +1,23 @@
 .ba_advert {
-  height: 250px;
-  border: 1px solid black;
-  border-radius: 2px;
-  margin: 0 auto;
-  overflow: hidden;
-  position: relative;
-  &__background {
-    background-image: url("https://www.imageupload.co.uk/images/2018/09/29/ba3.png");
-    height: 100%;
-    position: absolute;
-    width: 515px;
-    background-repeat: no-repeat;
-    background-size: contain;
-    top: 0;
-    right: 0;
-  }
-  &__heading {
-    margin-left: 2rem;
-    max-width: 42rem;
-    margin-top: 2rem;
-  }
-  &__button {
-    font-weight: 500;
-    font-size: 20px;
-    color: black;
-    background-color: aliceblue;
-    border: 2px solid black;
-    margin: 0;
-    padding: 10px 15px;
+    height: 250px;
+    border: 1px solid black;
     border-radius: 2px;
-    margin-left: 4rem;
-    margin-top: 0rem;
-    &:hover {
-      color: white;
-      background-color: black;
-      border: 2px solid white;
-      transition: 0.2s all ease-in-out;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    &__background {
+        background-image: url("https://www.imageupload.co.uk/images/2018/09/29/ba3.png");
+        height: 100%;
+        position: absolute;
+        width: 515px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        top: 0;
+        right: 0;
     }
-  }
+    &__heading {
+        margin-left: 2rem;
+        max-width: 42rem;
+        margin-top: 2rem;
+    }
 }

@@ -19,7 +19,10 @@ export const initApp = (
   model.createStore(initialState || undefined);
   router.registerRoutes(routes);
 
-  router.routeTo(window.location.pathname);
+  const currRoute = window.location.pathname;
+  const handleRootRoute = currRoute === "/" ? "/one" : currRoute;
+
+  router.routeTo(handleRootRoute);
   renderToDOM(app, root);
 };
 
@@ -59,33 +62,21 @@ export const rerender = (instance: IComponent) => {
 
   const model = container.get<Model>(types.Model);
   const vDOM = model.getVDOM();
-  // console.log(model.listeners, vDOM, "listrs,vdom");
 
   const vDOMNode = model.findVDOMNode(instance, vDOM);
-  // console.log(vDOM, vDOMNode, instance, "VDOM, FOUND NODE,instance");
   const vDOMChildren = vDOMNode ? vDOMNode.children : {};
 
   unsubscribeChildren(vDOMChildren);
-  // console.log("AFTER:", model.listeners, vDOM, "listrs,vdom");
   model.clearVDOMBranch(instance);
 
   const template: any = instance.render().content;
-  template.firstElementChild.setAttribute("data-id", instance.domId.toString());
-
-  const tmpElem = document.createElement("div");
-  tmpElem.appendChild(template);
+  template.firstElementChild.setAttribute("data-id", instance.domId.toString()); // TODO!!!!!!
 
   const mountedElem: any = document.querySelector(
     `[data-id='${instance.domId}']`
   );
 
-  // you can compare elements and change attributes only if same types
-  // console.log(mountedElem, mountedElem.parentElement);
-
-  mountedElem.parentElement.replaceChild(
-    tmpElem.firstElementChild,
-    mountedElem
-  );
+  updateDOM(mountedElem, template);
 
   instance.onUpdate();
 };
@@ -109,11 +100,193 @@ const unsubscribeChildren = (vDOMChildren: IvDOMLevel) => {
   });
 };
 
-export const html = (markup: TemplateStringsArray, ...values: any[]) => {
-  const template = document.createElement("template");
+const updateDOM = (currentElement: Element, updatedTemplate: Element) => {
+  const tmpElem = document.createElement("div");
+  tmpElem.appendChild(updatedTemplate);
+  const updatedMarkup = tmpElem.firstElementChild!;
 
-  const arrToString = (arr: string[]) =>
-    arr.reduce((acc, itm) => acc + itm, "");
+  diffDOMNodes(currentElement, updatedMarkup);
+};
+
+const diffDOMNodes = (currentElement: Element, updatedElement: Element) => {
+  // no changes
+  if (currentElement.isEqualNode(updatedElement)) {
+    console.log("same", updatedElement);
+    return;
+  }
+  // same type, check attibutes
+  if (
+    currentElement.nodeName === updatedElement.nodeName &&
+    currentElement.nodeType !== 3
+  ) {
+    console.log("same type", currentElement.nodeName);
+
+    const oldAttrs = Array.from(currentElement.attributes);
+    const newAttrs = Array.from(updatedElement.attributes);
+
+    const currentChildrenArr = filterEmptyTxtNodes(
+      Array.from(currentElement.childNodes)
+    );
+    const updatedChildrenArr = filterEmptyTxtNodes(
+      Array.from(updatedElement.childNodes)
+    );
+
+    const hasSameChildrenLength =
+      currentChildrenArr.length === updatedChildrenArr.length;
+
+    if (hasSameAttributes(newAttrs, oldAttrs)) {
+      // recurse on children
+      console.log("same attributes", newAttrs, oldAttrs);
+
+      if (updatedElement.hasChildNodes() && hasSameChildrenLength) {
+        currentChildrenArr.forEach((elem, i) =>
+          diffDOMNodes(<Element>elem, <Element>updatedChildrenArr[i])
+        );
+
+        return;
+      }
+    } else {
+      console.log("different attrs", updatedElement);
+      // replace attrs then recurse
+      assignAttributes(updatedElement, currentElement);
+
+      // if same children lenghts
+      if (updatedElement.hasChildNodes() && hasSameChildrenLength) {
+        currentChildrenArr.forEach((elem, i) =>
+          diffDOMNodes(<Element>elem, <Element>updatedChildrenArr[i])
+        );
+
+        return;
+      }
+      // if different children lenghts
+      if (updatedElement.hasChildNodes() && currentElement.hasChildNodes()) {
+        const currLen = currentChildrenArr.length;
+        const updLen = updatedChildrenArr.length;
+        console.log(currLen, updLen);
+        const shorterLen = Math.min(currLen, updLen);
+
+        // update existing children
+        updatedChildrenArr.forEach((elem, i) => {
+          if (i < shorterLen) {
+            console.log(i, "checkkk1", elem);
+
+            diffDOMNodes(<Element>currentChildrenArr[i], <Element>elem);
+          }
+        });
+
+        if (currLen > updLen) {
+          console.log("FIRED DELETE FN");
+          // remove existing nodes that are no longer needed
+          currentChildrenArr.forEach((elem, i) => {
+            if (i >= updLen) {
+              console.log("removing", elem);
+              currentElement.removeChild(elem);
+            }
+          });
+        }
+
+        // if updatedElem has more childrens than old append them
+        if (updLen > shorterLen) {
+          const fragment = document.createDocumentFragment();
+
+          updatedChildrenArr.forEach((elem, i) => {
+            if (i >= shorterLen) {
+              console.log(i, "checkkk2 appending ", elem);
+
+              fragment.appendChild(elem);
+            }
+          });
+          console.log(fragment.childNodes, "FRAG");
+          currentElement.appendChild(fragment);
+        }
+
+        return;
+      }
+    }
+  }
+
+  console.log("replace completly", currentElement);
+  // different node types, replace element
+
+  const parentElem = currentElement.parentElement;
+
+  if (!updatedElement || !parentElem) {
+    throw new Error("DOM error during rerendering process");
+  }
+
+  parentElem.replaceChild(updatedElement, currentElement);
+};
+
+const filterEmptyTxtNodes = (childrenArr: any[]) =>
+  childrenArr.filter(v => {
+    if (v.nodeType === 3 && !v.nodeValue!.trim()) return false;
+    return true;
+  });
+
+const hasSameAttributes = (newAttrs: any[], oldAttrs: any[]) => {
+  if (newAttrs.length !== oldAttrs.length) return false;
+
+  const sortedClass = (classes: string) =>
+    classes
+      ? classes
+          .split(" ")
+          .sort()
+          .join(" ")
+      : null;
+
+  const getClassVal = (attr: any[]) => {
+    const elem = attr.find(attr => attr.nodeName === "class");
+    return elem ? elem.nodeValue : null;
+  };
+
+  const newAttrsClasses = sortedClass(getClassVal(Array.from(newAttrs)));
+  const oldAttrsClasses = sortedClass(getClassVal(Array.from(oldAttrs)));
+
+  if (newAttrsClasses !== oldAttrsClasses) return false;
+
+  const newAttrsAsArr = Array.from(newAttrs);
+  const oldAttrsAsArr = Array.from(oldAttrs);
+
+  const final = newAttrsAsArr.every((attr, i) => {
+    if (attr.nodeName === "class") return true;
+
+    const n2ArrayElem = oldAttrsAsArr.find(
+      itm => itm.nodeName === attr.nodeName
+    );
+
+    return (
+      n2ArrayElem !== undefined && n2ArrayElem.nodeValue === attr.nodeValue
+    );
+  });
+
+  return final;
+};
+
+const assignAttributes = (updatedElement: Element, currentElement: Element) => {
+  // reset attrs
+  for (const attr of <any>currentElement.attributes) {
+    currentElement.removeAttribute(attr.name);
+  }
+
+  for (const attr of <any>updatedElement.attributes) {
+    if (attr.nodeName === "class") {
+      attr.nodeValue = attr.nodeValue
+        .split(" ")
+        .sort()
+        .join(" ");
+    }
+
+    currentElement.setAttribute(attr.nodeName, attr.nodeValue);
+  }
+};
+
+export const html = (markup: TemplateStringsArray, ...values: any[]) => {
+  const arrToString = (arr: (string | HTMLTemplateElement)[]) =>
+    arr.reduce((acc, itm) => {
+      if (itm instanceof HTMLTemplateElement) return acc + handleTemplate(itm);
+
+      return acc + itm;
+    }, "");
 
   const handleTemplate = (template: HTMLTemplateElement) => {
     const tmpElem = document.createElement("div");
@@ -131,6 +304,8 @@ export const html = (markup: TemplateStringsArray, ...values: any[]) => {
     }
     return values[idx];
   };
+
+  const template = document.createElement("template");
 
   template.innerHTML = markup
     .map((str, i) => `${str}${getVal(i) || ""}`)

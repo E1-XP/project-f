@@ -1,7 +1,9 @@
 import { injectable, inject } from "inversify";
 import { types } from "./IOC/types";
+
 import { IModel } from "./model";
 import { Router } from "./router";
+import { rerender } from "./index";
 
 export interface IComponent {
   props: string[];
@@ -26,6 +28,10 @@ export class Component implements IComponent {
     this.model = model;
     this.router = router;
     this.domId = this.model.getDomId();
+  }
+
+  forceRerender() {
+    rerender(this);
   }
 
   onMount() {}
