@@ -24,15 +24,15 @@ export const getImages = (part: number) =>
     .then(({ images }: Response) => {
       const model = container.get<Model>(types.Model);
       const extractedColors: any[] = [];
+
       let counter = 0;
+      let colorCounter = 0;
 
       const onLoad = (e: any) => {
         counter += 1;
         const loadStatus = Math.floor((counter / images.length) * 100);
-
+        console.log(counter, colorCounter);
         if (loadStatus === 100) {
-          console.log("LOAD IMAGES COMPLETED");
-
           model.setState({
             images,
             extractedColors,
@@ -44,18 +44,21 @@ export const getImages = (part: number) =>
         }
 
         model.setState({ loadStatus });
-        console.log(model.getState(), "MS");
       };
 
       images.sort((a, b) => a.id - b.id).map(image => {
         const img = new Image();
         img.src = `${URL}/${image.dir}`;
 
-        img.addEventListener("load", onLoad);
-
         vibrant
           .from(img.src)
           .getPalette()
-          .then((result: any) => extractedColors.push(result));
+          .then((result: any) => {
+            extractedColors[image.id - 1] = result;
+            colorCounter += 1;
+            console.log(colorCounter);
+          });
+
+        img.addEventListener("load", onLoad);
       });
     });

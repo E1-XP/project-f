@@ -1,6 +1,7 @@
 import { html } from "./../../lib";
 
 import { Props } from "./index";
+import { button, icon } from "./../shared";
 
 export default ({
   images,
@@ -40,9 +41,7 @@ export default ({
              <p class="info__description">test description</p>
              <div class="info__likes">
                 <div class="likes__count">0</div>
-                <button class="likes__button">
-                    <span class="material-icons">add</span>
-                </button>
+                ${button(["like ", icon("add")], "medium")}
              </div>
          </section>
         <nav class="image_slider__navigation">
