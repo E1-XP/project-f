@@ -192,8 +192,8 @@ export class Slider extends Component {
       (itm, idx) => `<li class="navigation__item${
         isImgActive(idx) ? " active" : ""
       }" data-idx=${idx}>
-      <img src="${URL}/${itm.thumbnail}" alt="gallery thumbnail">
       <span class="item__cover"></span>
+      <img src="${URL}/${itm.thumbnail}" alt="gallery thumbnail">
     </li>`
     );
   };

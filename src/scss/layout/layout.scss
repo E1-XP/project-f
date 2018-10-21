@@ -1,32 +1,32 @@
 .container {
-    overflow: hidden;
-    background-color: $lightGray;
-    position: relative;
-    >div {
-        transition: all 0.5s ease-in-out;
-        &.js-is-open {
-            perspective: 345vw;
-            overflow: hidden;
-        }
+  overflow: hidden;
+  background-color: $lightGray;
+  position: relative;
+  > div {
+    transition: all 0.5s ease-in-out;
+    &.js-is-open {
+      perspective: 345vw;
+      overflow: hidden;
     }
+  }
 }
 
 .l-page_container {
-    max-width: 1200px;
-    width: 90%;
-    margin: 1rem auto;
-    z-index: 5;
-    position: relative;
-    transition: all 0.5s ease-in-out;
-    @media only screen and (max-width: 900px) {
-        width:95%;
-    }
-    &.js-is-open {
-        height: 100vh;
-        transform: scale(0.8) rotateX(0deg) rotateY(43deg) translateX(-22vw) translateY(0vh);
-        overflow: hidden;
-        border: 6px solid rgba(255, 255, 255, 0.2);
-        padding: 1.5rem;
-        border-radius: 10px;
-    }
+  max-width: 1200px;
+  width: 90%;
+  margin: 1rem auto;
+  z-index: 5;
+  position: relative;
+  transition: all 300ms ease-in-out;
+  @media only screen and (max-width: 900px) {
+    width: 95%;
+  }
+  &.js-is-open {
+    height: 100vh;
+    transform: scale(0.8) rotateY(43deg) translateX(-22vw);
+    overflow: hidden;
+    border: 6px solid rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
+    border-radius: 10px;
+  }
 }

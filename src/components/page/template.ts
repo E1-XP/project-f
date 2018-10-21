@@ -8,6 +8,7 @@ import { Header } from "./../header";
 import { Slider } from "./../slider";
 import { CompareSlider } from "./../ba-slider";
 import { BeforeAfterAd } from "./../ba-advert";
+import { SocialLinks } from "./../social-links";
 import { Footer } from "./../footer";
 
 export default ({ parentRef, isMenuOpen, currentPart }: Props) => html`
@@ -25,6 +26,7 @@ export default ({ parentRef, isMenuOpen, currentPart }: Props) => html`
                   currentPart !== 5 &&
                   run(BeforeAfterAd, parentRef)}
             </main>
+            ${run(SocialLinks, parentRef)}
             ${run(Footer, parentRef)}
             ${isMenuOpen && '<div class="page__button" id="js-page-btn"></div>'}
         </div>
