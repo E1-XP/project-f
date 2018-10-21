@@ -111,16 +111,13 @@ const updateDOM = (currentElement: Element, updatedTemplate: Element) => {
 const diffDOMNodes = (currentElement: Element, updatedElement: Element) => {
   // no changes
   if (currentElement.isEqualNode(updatedElement)) {
-    console.log("same", updatedElement);
     return;
   }
-  // same type, check attibutes
+  // same type, not text node, check attibutes
   if (
     currentElement.nodeName === updatedElement.nodeName &&
     currentElement.nodeType !== 3
   ) {
-    console.log("same type", currentElement.nodeName);
-
     const oldAttrs = Array.from(currentElement.attributes);
     const newAttrs = Array.from(updatedElement.attributes);
 
@@ -136,8 +133,6 @@ const diffDOMNodes = (currentElement: Element, updatedElement: Element) => {
 
     if (hasSameAttributes(newAttrs, oldAttrs)) {
       // recurse on children
-      console.log("same attributes", newAttrs, oldAttrs);
-
       if (updatedElement.hasChildNodes() && hasSameChildrenLength) {
         currentChildrenArr.forEach((elem, i) =>
           diffDOMNodes(<Element>elem, <Element>updatedChildrenArr[i])
@@ -146,7 +141,6 @@ const diffDOMNodes = (currentElement: Element, updatedElement: Element) => {
         return;
       }
     } else {
-      console.log("different attrs", updatedElement);
       // replace attrs then recurse
       assignAttributes(updatedElement, currentElement);
 
@@ -162,24 +156,20 @@ const diffDOMNodes = (currentElement: Element, updatedElement: Element) => {
       if (updatedElement.hasChildNodes() && currentElement.hasChildNodes()) {
         const currLen = currentChildrenArr.length;
         const updLen = updatedChildrenArr.length;
-        console.log(currLen, updLen);
+
         const shorterLen = Math.min(currLen, updLen);
 
         // update existing children
         updatedChildrenArr.forEach((elem, i) => {
           if (i < shorterLen) {
-            console.log(i, "checkkk1", elem);
-
             diffDOMNodes(<Element>currentChildrenArr[i], <Element>elem);
           }
         });
 
         if (currLen > updLen) {
-          console.log("FIRED DELETE FN");
           // remove existing nodes that are no longer needed
           currentChildrenArr.forEach((elem, i) => {
             if (i >= updLen) {
-              console.log("removing", elem);
               currentElement.removeChild(elem);
             }
           });
@@ -191,12 +181,9 @@ const diffDOMNodes = (currentElement: Element, updatedElement: Element) => {
 
           updatedChildrenArr.forEach((elem, i) => {
             if (i >= shorterLen) {
-              console.log(i, "checkkk2 appending ", elem);
-
               fragment.appendChild(elem);
             }
           });
-          console.log(fragment.childNodes, "FRAG");
           currentElement.appendChild(fragment);
         }
 
@@ -205,9 +192,7 @@ const diffDOMNodes = (currentElement: Element, updatedElement: Element) => {
     }
   }
 
-  console.log("replace completly", currentElement);
   // different node types, replace element
-
   const parentElem = currentElement.parentElement;
 
   if (!updatedElement || !parentElem) {

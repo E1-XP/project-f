@@ -1,5 +1,8 @@
 import { Component } from "./../../lib/component";
 import { html } from "./../../lib";
+
+import { button, icon } from "./../shared";
+
 export interface Props {}
 
 export class Footer extends Component {
@@ -9,7 +12,7 @@ export class Footer extends Component {
             <p class="page_footer__text">
                 &copy ${new Date().getFullYear()} GTxmotorsports. All rights reserved.
             </p>
-            <button>To Top</button>
+            <a>${icon("arrow_drop_up")} To Top</a>
         </footer>
     `;
   }
