@@ -1,5 +1,6 @@
 import { Component } from "./../../lib/component";
 
+import { addLike } from "./../../effects";
 import template from "./template";
 
 export interface Props {
@@ -7,6 +8,8 @@ export interface Props {
   currentSlide: number | undefined;
   getImageList: () => string[] | string;
   getThumbnails: () => string[] | string;
+  getLikes: (idx: number) => string;
+  checkIfLiked: (idx: number) => boolean;
 }
 
 export class Slider extends Component {
@@ -18,19 +21,22 @@ export class Slider extends Component {
   stopStartBtn: HTMLElement | null = null;
   getFullSizeBtn: HTMLElement | null = null;
   nextBtn: HTMLElement | null = null;
+  likeBtn: HTMLElement | null = null;
 
   onMount = () => {
     this.backBtn = document.getElementById("js-slider-back");
     this.stopStartBtn = document.getElementById("js-slider-stop");
     this.getFullSizeBtn = document.getElementById("js-slider-getimg");
     this.nextBtn = document.getElementById("js-slider-next");
+    this.likeBtn = document.getElementById("js-likes-btn");
 
     this.slides = Array.from(document.querySelectorAll(".image_slider img"));
 
     if (
       !this.backBtn ||
       !this.stopStartBtn ||
-      !this.nextBtn
+      !this.nextBtn ||
+      !this.likeBtn
       // !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
@@ -40,6 +46,7 @@ export class Slider extends Component {
     this.stopStartBtn.addEventListener("click", this.stopStartSlider);
     // this.getFullSizeBtn.addEventListener("click", this.getFullImage);
     this.nextBtn.addEventListener("click", this.nextSlide);
+    this.likeBtn.addEventListener("click", this.handleLikeClick);
 
     document.addEventListener("keydown", this.enableKeySteering);
     this.addThumbnailListeners();
@@ -54,7 +61,8 @@ export class Slider extends Component {
     if (
       !this.backBtn ||
       !this.stopStartBtn ||
-      !this.nextBtn
+      !this.nextBtn ||
+      !this.likeBtn
       // !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
@@ -64,6 +72,7 @@ export class Slider extends Component {
     this.stopStartBtn.removeEventListener("click", this.stopStartSlider);
     // this.getFullSizeBtn.removeEventListener("click", this.getFullImage);
     this.nextBtn.removeEventListener("click", this.nextSlide);
+    this.likeBtn.removeEventListener("click", this.handleLikeClick);
 
     document.removeEventListener("keydown", this.enableKeySteering);
     this.removeThumbnailListeners();
@@ -75,10 +84,10 @@ export class Slider extends Component {
     if (currentSlide === undefined || !images) {
       throw new Error("store probably crashed");
     }
-    const inLastSlide = currentSlide > images.length - 1;
+    const onLastSlide = currentSlide >= images.length - 1;
 
     this.model.setState({
-      currentSlide: inLastSlide ? 0 : currentSlide + 1
+      currentSlide: onLastSlide ? 0 : currentSlide + 1
     });
   };
 
@@ -180,6 +189,36 @@ export class Slider extends Component {
     this.model.setState({ currentSlide });
   };
 
+  handleLikeClick = () => {
+    const { currentPart, currentSlide } = this.model.getState();
+
+    if (currentPart === undefined || currentSlide === undefined) {
+      throw new Error(`can't connect state`);
+    }
+
+    if (!this.checkIfLiked(currentSlide)) {
+      addLike(currentPart, currentSlide);
+    }
+  };
+
+  checkIfLiked = (slideNum: number) => {
+    const { currentPart } = this.model.getState();
+    const data = localStorage.getItem("data");
+
+    if (currentPart === undefined || !data) {
+      throw new Error("preloader probably not working");
+    }
+
+    return JSON.parse(data)[currentPart][slideNum];
+  };
+
+  getLikes = (idx: number) => {
+    const { images, currentSlide } = this.model.getState();
+
+    if (!images) throw new Error("check slider for state error");
+    return Number(images[idx].likes).toString();
+  };
+
   getThumbnails = () => {
     const { images, currentSlide } = this.model.getState();
     const URL = `https://boiling-citadel-14104.herokuapp.com`;
@@ -205,7 +244,9 @@ export class Slider extends Component {
       images,
       currentSlide,
       getImageList: this.getImageList,
-      getThumbnails: this.getThumbnails
+      getThumbnails: this.getThumbnails,
+      getLikes: this.getLikes,
+      checkIfLiked: this.checkIfLiked
     });
   }
 }

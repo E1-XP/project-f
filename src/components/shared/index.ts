@@ -7,6 +7,7 @@ type TbtnContent =
 
 interface Params {
   id?: string;
+  class?: string;
 }
 
 export const button = (
@@ -15,10 +16,12 @@ export const button = (
   props: Params = {}
 ) => {
   const id = props.id ? `id="${props.id}"` : "";
+  const additionalClasses = props.class ? " " + props.class : "";
 
   return html`
-    <button ${id} class="button${variant ? "--" + variant : ""}">
-        ${content}
+    <button ${id} class="button${
+    variant ? "--" + variant + additionalClasses : "" + additionalClasses
+  }"> ${content}
     </button>
 `;
 };

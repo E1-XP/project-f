@@ -13,7 +13,10 @@ export class Preloader extends Component {
 
   onMount = () => {
     const { currentPart } = this.model.getState();
+
     currentPart !== undefined && effects.getImages(currentPart);
+
+    effects.populateLocalStorage();
   };
 
   render() {

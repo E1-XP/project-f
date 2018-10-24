@@ -7,7 +7,9 @@ export default ({
   images,
   getImageList,
   getThumbnails,
-  currentSlide
+  getLikes,
+  currentSlide,
+  checkIfLiked
 }: Props) => html`
     <div class="image_slider">
         <figure class="image_slider__content">
@@ -18,17 +20,19 @@ export default ({
                 <div class="navigation__button--left" id="js-slider-back">
                     <span class="material-icons icon">arrow_back_ios</span>
                 </div>
-                <div class="navigation__button--stop" id="js-slider-stop">
-                    <span class="material-icons icon">pause</span>
+                <div class="navigation__dock">
+                    <div class="navigation__button--stop" id="js-slider-stop">
+                        <span class="material-icons icon">pause</span>
+                    </div>
+                    <div class="navigation__button--stop" id="js-slider__getimg">
+                        <span class="material-icons icon">pause</span>
+                    </div>
                 </div>
-                <!-- <div class="navigation__button--stop" id="js-slider__getimg">
-                    <span class="material-icons icon">pause</span>
-                </div> -->
-                  <!-- <div class="navigation__button--stop" id="js-slider__fullscreen">
-                    <span class="material-icons icon">pause</span>
-                </div> -->
                 <div class="navigation__button--right" id="js-slider-next">
                     <span class="material-icons icon">arrow_forward_ios</span>
+                </div>
+                <div class="navigation__button--fullscreen" id="js-slider-fullscreen">
+                    <span class="material-icons icon">photo_size_select_large</span>
                 </div>
             </nav>
          </figure>
@@ -40,8 +44,15 @@ export default ({
             </div>
              <p class="info__description">test description</p>
              <div class="info__likes">
-                <div class="likes__count">0</div>
-                ${button(["like ", icon("add")], "medium")}
+                <div class="likes__count">${currentSlide !== undefined &&
+                  getLikes(currentSlide)}</div>
+                ${button(["like ", icon("add")], "medium", {
+                  id: "js-likes-btn",
+                  class:
+                    currentSlide !== undefined && checkIfLiked(currentSlide)
+                      ? "active"
+                      : ""
+                })}
              </div>
          </section>
         <nav class="image_slider__navigation">

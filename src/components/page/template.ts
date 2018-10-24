@@ -12,9 +12,9 @@ import { SocialLinks } from "./../social-links";
 import { Footer } from "./../footer";
 
 export default ({ parentRef, isMenuOpen, currentPart }: Props) => html`
-    <div ${isMenuOpen && 'class="js-is-open"'}>
+    <div ${isMenuOpen && 'class="is-open"'}>
         ${run(PageBackgrounds, parentRef)}
-        <div class="l-page_container${isMenuOpen && " js-is-open"}">
+        <div class="l-page_container${isMenuOpen && " is-open"}">
             ${run(Header, parentRef)}
             <main>
                 ${

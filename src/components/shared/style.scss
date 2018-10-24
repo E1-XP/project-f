@@ -10,6 +10,14 @@
     justify-content: center;
     box-shadow: -1px 3px 15px 0px rgba(12, 12, 12, 0.6);
     border-radius: 2px;
+    &.active {
+        background-color: $attackYellow;
+        &:hover {
+            color: black;
+            background-color: $attackYellow;
+            border: 2px solid black;
+        }
+    }
     &:hover {
         color: white;
         background-color: black;
@@ -25,8 +33,5 @@
     &--big {
         @extend .button;
         padding: 10px 15px;
-    }
-    &--disabled {
-        @extend .button;
     }
 }
