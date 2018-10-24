@@ -2,10 +2,10 @@
   &__text {
     text-align: center;
   }
-  a {
+  &__link {
     display: flex;
-    max-width: 4.6rem;
+    max-width: 4.8rem;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
   }
 }

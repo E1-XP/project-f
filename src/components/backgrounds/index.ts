@@ -13,7 +13,7 @@ export class PageBackgrounds extends Component {
       document.querySelector(".page_background__item.active div")
     );
 
-    console.log(active, extractedColors, "COLORS");
+    console.log(active, extractedColors, "COLORS",currentSlide);
 
     if (currentSlide === undefined || !active || !extractedColors) {
       throw new Error("page backgrounds crashed.");

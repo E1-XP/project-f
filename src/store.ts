@@ -1,3 +1,10 @@
+export interface ImageData {
+  dir: string;
+  thumbnail: string;
+  id: number;
+  likes: number;
+}
+
 export interface State {
   isLoading: boolean;
   loadStatus: number;
@@ -5,7 +12,7 @@ export interface State {
   isSliderRunning: boolean;
   currentSlide: number;
   currentPart: number;
-  images: any[];
+  images: ImageData[];
   extractedColors: any[];
 }
 

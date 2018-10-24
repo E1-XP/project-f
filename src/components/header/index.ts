@@ -41,8 +41,10 @@ export class Header extends Component {
 
   handleMenuClick = (e: any) => {
     const { isMenuOpen } = this.model.getState();
-
     this.model.setState({ isMenuOpen: !isMenuOpen });
+
+    const cont: any = document.querySelector(".l-page_container");
+    if (cont) cont.style.maxHeight = "100vh";
   };
 
   handleHeaderLogoClick = () => {

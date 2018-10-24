@@ -1,32 +1,47 @@
 .container {
-  overflow: hidden;
-  background-color: $lightGray;
-  position: relative;
-  > div {
-    transition: all 0.5s ease-in-out;
-    &.js-is-open {
-      perspective: 345vw;
-      overflow: hidden;
+    overflow: hidden;
+    background-color: $lightGray;
+    position: relative;
+    transition: all 300ms ease-in-out;
+    >div {
+        &.is-open {
+            overflow: hidden;
+            perspective: 345vw;
+        }
     }
-  }
 }
 
 .l-page_container {
-  max-width: 1200px;
-  width: 90%;
-  margin: 1rem auto;
-  z-index: 5;
-  position: relative;
-  transition: all 300ms ease-in-out;
-  @media only screen and (max-width: 900px) {
-    width: 95%;
-  }
-  &.js-is-open {
-    height: 100vh;
-    transform: scale(0.8) rotateY(43deg) translateX(-22vw);
-    overflow: hidden;
-    border: 6px solid rgba(255, 255, 255, 0.2);
-    padding: 1.5rem;
-    border-radius: 10px;
-  }
+    max-width: 1200px;
+    width: 90%;
+    margin: 1rem auto;
+    z-index: 5;
+    position: relative;
+    transition: all 300ms ease-in-out;
+    @media only screen and (max-width: 900px) {
+        width: 95%;
+    }
+    &.is-open {
+        min-height: 45rem;
+        overflow: hidden;
+        transform: scale(0.8) rotateY(46deg) translateX(-18vw);
+        border: 6px solid rgba(255, 255, 255, 0.2);
+        padding: 1.5rem;
+        border-radius: 10px;
+        @media only screen and (max-width: 900px) {
+            transform: scale(0.8) rotateY(54deg) translateX(-25vw);
+        }
+        @media only screen and (max-width: 750px) {
+            transform: scale(0.8) rotateY(54deg) translateX(-28vw);
+        }
+        @media only screen and (max-width: 670px) {
+            transform: scale(0.8) rotateY(59deg) translateX(-37vw);
+        }
+        @media only screen and (max-width: 570px) {
+            transform: scale(0.8) rotateY(59deg) translateX(-41vw);
+        }
+        @media only screen and (max-width: 550px) {
+            transform: scale(0.7) rotateY(64deg) translateX(-61vw);
+        }
+    }
 }
