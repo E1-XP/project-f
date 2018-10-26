@@ -24,7 +24,7 @@ export default ({
                     <div class="navigation__button--stop" id="js-slider-stop">
                         <span class="material-icons icon">pause</span>
                     </div>
-                    <div class="navigation__button--stop" id="js-slider__getimg">
+                    <div class="navigation__button--stop" id="js-slider-getimg">
                         <span class="material-icons icon">pause</span>
                     </div>
                 </div>

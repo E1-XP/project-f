@@ -13,13 +13,15 @@ export interface Props {
 }
 
 export class Slider extends Component {
-  props = ["images", "currentSlide"];
+  props = ["images", "currentSlide", "isSliderRunning"];
+
   slides: HTMLImageElement[] = [];
   sliderInterval: any = null;
 
   backBtn: HTMLElement | null = null;
   stopStartBtn: HTMLElement | null = null;
   getFullSizeBtn: HTMLElement | null = null;
+  toggleLightboxBtn: HTMLElement | null = null;
   nextBtn: HTMLElement | null = null;
   likeBtn: HTMLElement | null = null;
 
@@ -28,16 +30,26 @@ export class Slider extends Component {
     this.stopStartBtn = document.getElementById("js-slider-stop");
     this.getFullSizeBtn = document.getElementById("js-slider-getimg");
     this.nextBtn = document.getElementById("js-slider-next");
+    this.toggleLightboxBtn = document.getElementById("js-slider-fullscreen");
     this.likeBtn = document.getElementById("js-likes-btn");
 
     this.slides = Array.from(document.querySelectorAll(".image_slider img"));
 
+    this.appendListeners();
+    // this.stopStartSlider();
+  };
+
+  onUnmount = () => {
+    this.detachListeners();
+  };
+
+  appendListeners = () => {
     if (
       !this.backBtn ||
       !this.stopStartBtn ||
       !this.nextBtn ||
-      !this.likeBtn
-      // !this.getFullSizeBtn
+      !this.likeBtn ||
+      !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
     }
@@ -50,20 +62,15 @@ export class Slider extends Component {
 
     document.addEventListener("keydown", this.enableKeySteering);
     this.addThumbnailListeners();
-    // this.stopStartSlider();
   };
 
-  onUpdate = () => {
-    this.onMount();
-  };
-
-  onUnmount = () => {
+  detachListeners = () => {
     if (
       !this.backBtn ||
       !this.stopStartBtn ||
       !this.nextBtn ||
-      !this.likeBtn
-      // !this.getFullSizeBtn
+      !this.likeBtn ||
+      !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
     }
@@ -105,7 +112,10 @@ export class Slider extends Component {
   };
 
   stopStartSlider = () => {
+    const { isSliderRunning } = this.model.getState();
     const handleClick = () => this.nextBtn && this.nextBtn.click();
+
+    this.model.setState({ isSliderRunning: !isSliderRunning });
 
     this.sliderInterval
       ? clearInterval(this.sliderInterval)
@@ -134,16 +144,35 @@ export class Slider extends Component {
 
   getClassNames = (length: number, idx: number) => {
     const { currentSlide } = this.model.getState();
+    const currElem: any = document.querySelector(
+      ".image_slider .content__list .active"
+    );
 
     if (currentSlide === undefined) {
       throw new Error("store probably crashed");
     }
 
+    // its taken from DOM before update occurs
+    const prevActiveIdx = currElem
+      ? Number(currElem.dataset.idx)
+      : currentSlide;
+
     const isCurrent = idx === currentSlide;
-    const backSlideIdx = currentSlide === 0 ? length - 1 : currentSlide - 1;
+    const isDecremented =
+      (prevActiveIdx === 0 && currentSlide === length - 1) ||
+      currentSlide < prevActiveIdx;
+
+    const getBackSlideIdx = (idx: number) => {
+      const equals = (val: number) => val === idx;
+
+      if (Math.abs(currentSlide - prevActiveIdx) > 1) {
+        return equals(prevActiveIdx);
+      }
+      return equals(isDecremented ? currentSlide + 1 : currentSlide - 1);
+    };
 
     return `content__item${isCurrent ? " active" : ""}${
-      idx === backSlideIdx ? " back" : ""
+      getBackSlideIdx(idx) ? " back" : ""
     }`;
   };
 
@@ -156,8 +185,8 @@ export class Slider extends Component {
     return images.map(
       (itm, i, arr) =>
         `<li class="${this.getClassNames(arr.length, i)}" data-idx="${i}">
-            <img src="${URL}/${itm.dir}" alt="image">
-         </li>`
+            <img src="${URL}/${itm.dir}" alt="high performance vehicle"> 
+         </li>` // TODO alt attr can be taken from image description
     );
   };
 
@@ -213,9 +242,9 @@ export class Slider extends Component {
   };
 
   getLikes = (idx: number) => {
-    const { images, currentSlide } = this.model.getState();
-
+    const { images } = this.model.getState();
     if (!images) throw new Error("check slider for state error");
+
     return Number(images[idx].likes).toString();
   };
 
