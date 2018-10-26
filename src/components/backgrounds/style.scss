@@ -11,15 +11,15 @@
       transform: translateZ(0);
     }
     &:first-of-type div {
-      background-color: rebeccapurple;
+      background-color: #666;
     }
     &:last-of-type div {
-      background-color: azure;
+      background-color: #999;
     }
     &.active div {
       display: inline-block;
       z-index: 3;
-      animation: fadeAnim 1s 0s;
+      animation: fadeAnim 500ms;
     }
     &.back div {
       display: inline-block;
