@@ -39,8 +39,6 @@ export const getImages = (part: number) =>
               counter += 1;
               const loadStatus = Math.floor((counter / images.length) * 100);
 
-              console.log(counter);
-
               if (loadStatus === 100) {
                 model.setState({
                   images,

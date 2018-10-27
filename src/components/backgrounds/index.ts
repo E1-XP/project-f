@@ -36,8 +36,19 @@ export class PageBackgrounds extends Component {
       throw new Error("page backgrounds crashed.");
     }
 
-    const val = extractedColors[currentSlide].DarkMuted._rgb.join(",");
-    const val2 = extractedColors[currentSlide].Muted._rgb.join(",");
+    const val = (() => {
+      const darkMuted = extractedColors[currentSlide].DarkMuted;
+
+      if (darkMuted) return darkMuted._rgb.join(",");
+      return extractedColors[currentSlide].DarkVibrant._rgb.join(",");
+    })();
+
+    const val2 = (() => {
+      const muted = extractedColors[currentSlide].Muted;
+
+      if (muted) return muted._rgb.join(",");
+      return extractedColors[currentSlide].Vibrant._rgb.join(",");
+    })();
 
     this.back.style.background = this.prevActiveStyle;
     this.active.style.background = `linear-gradient(to top,#232526, rgb(${val}),rgb(${val2}))`;

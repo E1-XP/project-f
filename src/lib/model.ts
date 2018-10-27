@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 
+import { AppCore } from "./core";
 import { EventEmitter } from "./observer";
 import { State } from "./../store";
 import { IComponent } from "./component";
@@ -31,10 +32,6 @@ export class Model extends EventEmitter implements IModel {
   private domCount = 0;
   private vDOM: any = {};
   state: EmptyState = {};
-
-  constructor() {
-    super();
-  }
 
   createStore(initialState?: Partial<State>) {
     if (Object.keys(this.state).length) {

@@ -1,6 +1,8 @@
-import { injectable } from "inversify";
-import { rerender } from "./index";
+import { injectable, inject } from "inversify";
+import { types } from "./IOC/types";
+
 import { IComponent } from "./component";
+import { AppCore } from "./core";
 
 export interface Listener {
   ref: IComponent;
@@ -17,6 +19,8 @@ export interface IEventEmitter {
 @injectable()
 export abstract class EventEmitter implements IEventEmitter {
   listeners: Listener[] = [];
+
+  constructor(@inject(types.AppCore) private core: AppCore) {}
 
   subscribe(ref: IComponent) {
     if (this.listeners.filter(itm => itm.ref === ref).length) return;
@@ -36,8 +40,9 @@ export abstract class EventEmitter implements IEventEmitter {
       const { ref, props } = itm;
 
       if (props.some(key => propKeys.includes(key))) {
-        // listeners is modified during loop run so check if still exist here
-        this.listeners.includes(itm) && ref.shouldUpdate() && rerender(ref);
+        // listeners array is modified during loop run so check if still exist here
+        const should = this.listeners.includes(itm) && ref.shouldUpdate();
+        should && this.core.rerender(ref);
       }
     });
   }
