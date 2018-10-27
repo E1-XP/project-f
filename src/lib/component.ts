@@ -24,7 +24,10 @@ export class Component implements IComponent {
   props: string[] = [];
   // template ?
 
-  constructor(@inject(types.Model) model: IModel, router: Router) {
+  constructor(
+    @inject(types.Model) model: IModel,
+    @inject(types.Router) router: Router
+  ) {
     this.model = model;
     this.router = router;
     this.domId = this.model.getDomId();
