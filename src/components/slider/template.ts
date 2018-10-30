@@ -9,30 +9,38 @@ export default ({
   getThumbnails,
   getLikes,
   currentSlide,
-  checkIfLiked
+  checkIfLiked,
+  isSliderRunning,
+  isLightboxOpen
 }: Props) => html`
     <div class="image_slider">
+        <div class="${
+          isLightboxOpen ? "is-open " : ""
+        }image_slider__lightbox" id="js-lightbox"></div>
         <figure class="image_slider__content">
             <ul class="content__list">
             ${images && getImageList()}
             </ul> 
             <nav class="content__navigation">
-                <div class="navigation__button--left" id="js-slider-back">
+                <div class="navigation__progress"></div>
+                <div class="slide__button--left" id="js-slider-back">
                     <span class="material-icons icon">arrow_back_ios</span>
                 </div>
                 <div class="navigation__dock">
-                    <div class="navigation__button--stop" id="js-slider-stop">
-                        <span class="material-icons icon">pause</span>
+                    <div class="navigation__button" id="js-slider-stop">
+                        <span class="material-icons icon">${
+                          isSliderRunning ? "pause" : "play_arrow"
+                        }</span>
                     </div>
-                    <div class="navigation__button--stop" id="js-slider-getimg">
-                        <span class="material-icons icon">pause</span>
+                    <div class="navigation__button" id="js-slider-getimg">
+                        <span class="material-icons icon">open_in_new</span>
                     </div>
-                </div>
-                <div class="navigation__button--right" id="js-slider-next">
-                    <span class="material-icons icon">arrow_forward_ios</span>
                 </div>
                 <div class="navigation__button--fullscreen" id="js-slider-fullscreen">
                     <span class="material-icons icon">photo_size_select_large</span>
+                </div>
+                <div class="slide__button--right" id="js-slider-next">
+                    <span class="material-icons icon">arrow_forward_ios</span>
                 </div>
             </nav>
          </figure>

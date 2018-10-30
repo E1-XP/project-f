@@ -1,11 +1,13 @@
 import { Component } from "./../../lib/component";
 
-import { addLike } from "./../../effects";
+import * as effects from "./../../effects";
 import template from "./template";
 
 export interface Props {
   images: any[] | undefined;
   currentSlide: number | undefined;
+  isSliderRunning: boolean | undefined;
+  isLightboxOpen: boolean | undefined;
   getImageList: () => string[] | string;
   getThumbnails: () => string[] | string;
   getLikes: (idx: number) => string;
@@ -13,7 +15,7 @@ export interface Props {
 }
 
 export class Slider extends Component {
-  props = ["images", "currentSlide", "isSliderRunning"];
+  props = ["images", "currentSlide", "isSliderRunning", "isLightboxOpen"];
 
   slides: HTMLImageElement[] = [];
   sliderInterval: any = null;
@@ -22,6 +24,7 @@ export class Slider extends Component {
   stopStartBtn: HTMLElement | null = null;
   getFullSizeBtn: HTMLElement | null = null;
   toggleLightboxBtn: HTMLElement | null = null;
+  lightboxElem: HTMLElement | null = null;
   nextBtn: HTMLElement | null = null;
   likeBtn: HTMLElement | null = null;
 
@@ -30,17 +33,32 @@ export class Slider extends Component {
     this.stopStartBtn = document.getElementById("js-slider-stop");
     this.getFullSizeBtn = document.getElementById("js-slider-getimg");
     this.nextBtn = document.getElementById("js-slider-next");
+    this.lightboxElem = document.getElementById("js-lightbox")!;
     this.toggleLightboxBtn = document.getElementById("js-slider-fullscreen");
     this.likeBtn = document.getElementById("js-likes-btn");
 
     this.slides = Array.from(document.querySelectorAll(".image_slider img"));
 
     this.appendListeners();
-    // this.stopStartSlider();
+    this.stopStartSlider();
+    console.log("MOUNTED SLIDER");
   };
 
   onUnmount = () => {
+    console.log("UNMOUNTING SLIDER");
     this.detachListeners();
+  };
+
+  onUpdate = () => {
+    const { isLightboxOpen } = this.model.getState();
+
+    if (isLightboxOpen) {
+      this.lightboxElem &&
+        this.lightboxElem.addEventListener("click", this.toggleLightbox);
+    } else {
+      this.lightboxElem &&
+        this.lightboxElem.removeEventListener("click", this.toggleLightbox);
+    }
   };
 
   appendListeners = () => {
@@ -49,6 +67,8 @@ export class Slider extends Component {
       !this.stopStartBtn ||
       !this.nextBtn ||
       !this.likeBtn ||
+      !this.toggleLightboxBtn ||
+      !this.getFullSizeBtn ||
       !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
@@ -56,7 +76,8 @@ export class Slider extends Component {
 
     this.backBtn.addEventListener("click", this.prevSlide);
     this.stopStartBtn.addEventListener("click", this.stopStartSlider);
-    // this.getFullSizeBtn.addEventListener("click", this.getFullImage);
+    this.toggleLightboxBtn.addEventListener("click", this.toggleLightbox);
+    this.getFullSizeBtn.addEventListener("click", this.getFullImage);
     this.nextBtn.addEventListener("click", this.nextSlide);
     this.likeBtn.addEventListener("click", this.handleLikeClick);
 
@@ -65,11 +86,15 @@ export class Slider extends Component {
   };
 
   detachListeners = () => {
+    const { isLightboxOpen } = this.model.getState();
+
     if (
       !this.backBtn ||
       !this.stopStartBtn ||
       !this.nextBtn ||
       !this.likeBtn ||
+      !this.toggleLightboxBtn ||
+      !this.getFullSizeBtn ||
       !this.getFullSizeBtn
     ) {
       throw new Error("DOM elements not found.");
@@ -77,9 +102,13 @@ export class Slider extends Component {
 
     this.backBtn.removeEventListener("click", this.prevSlide);
     this.stopStartBtn.removeEventListener("click", this.stopStartSlider);
-    // this.getFullSizeBtn.removeEventListener("click", this.getFullImage);
+    this.toggleLightboxBtn.removeEventListener("click", this.toggleLightbox);
+    this.getFullSizeBtn.removeEventListener("click", this.getFullImage);
     this.nextBtn.removeEventListener("click", this.nextSlide);
     this.likeBtn.removeEventListener("click", this.handleLikeClick);
+    isLightboxOpen &&
+      this.lightboxElem &&
+      this.lightboxElem.removeEventListener("click", this.toggleLightbox);
 
     document.removeEventListener("keydown", this.enableKeySteering);
     this.removeThumbnailListeners();
@@ -112,14 +141,19 @@ export class Slider extends Component {
   };
 
   stopStartSlider = () => {
-    const { isSliderRunning } = this.model.getState();
+    const { isSliderRunning, slideInterval } = this.model.getState();
     const handleClick = () => this.nextBtn && this.nextBtn.click();
 
     this.model.setState({ isSliderRunning: !isSliderRunning });
 
-    this.sliderInterval
-      ? clearInterval(this.sliderInterval)
-      : (this.sliderInterval = setInterval(handleClick, 3000));
+    console.log(!isSliderRunning, (<any>window).sliderInterval);
+
+    (<any>window).sliderInterval
+      ? clearInterval((<any>window).sliderInterval)
+      : ((<any>window).sliderInterval = setInterval(
+          handleClick,
+          slideInterval
+        ));
   };
 
   enableKeySteering = (e: KeyboardEvent) => {
@@ -138,8 +172,16 @@ export class Slider extends Component {
     }
   };
 
-  getFullImage = () => {
-    alert("ok");
+  getFullImage = (e: any) => {
+    const img: any = document.querySelector(
+      ".image_slider__content .content__item.active img"
+    );
+    img && window.open(img.src, "_blank");
+  };
+
+  toggleLightbox = () => {
+    const { isLightboxOpen } = this.model.getState();
+    this.model.setState({ isLightboxOpen: !isLightboxOpen });
   };
 
   getClassNames = (length: number, idx: number) => {
@@ -226,7 +268,7 @@ export class Slider extends Component {
     }
 
     if (!this.checkIfLiked(currentSlide)) {
-      addLike(currentPart, currentSlide);
+      effects.addLike(currentPart, currentSlide);
     }
   };
 
@@ -267,11 +309,18 @@ export class Slider extends Component {
   };
 
   render(): HTMLTemplateElement {
-    const { images, currentSlide } = this.model.getState();
+    const {
+      images,
+      currentSlide,
+      isSliderRunning,
+      isLightboxOpen
+    } = this.model.getState();
 
     return template({
       images,
       currentSlide,
+      isSliderRunning,
+      isLightboxOpen,
       getImageList: this.getImageList,
       getThumbnails: this.getThumbnails,
       getLikes: this.getLikes,

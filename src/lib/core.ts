@@ -17,12 +17,13 @@ export class AppCore {
     const instance = new component(model, router);
 
     model.subscribe(instance);
-    console.log(`${instance.constructor.name} Mounted`);
 
     model.appendToVDOM(instance, parentInstance || undefined);
     console.log("vdom", model.getVDOM());
 
     setTimeout(instance.onMount, 0);
+
+    console.log(`${instance.constructor.name} Mounted`);
 
     const template = instance.render().content;
     template.firstElementChild.setAttribute("data-id", instance.domId);
@@ -123,6 +124,9 @@ export class AppCore {
         // replace attrs then recurse
         this.assignAttributes(updatedElement, currentElement);
 
+        // no children
+        if (!updatedElement.hasChildNodes()) return;
+
         // if same children lenghts
         if (updatedElement.hasChildNodes() && hasSameChildrenLength) {
           currentChildrenArr.forEach((elem, i) =>
@@ -170,7 +174,6 @@ export class AppCore {
         }
       }
     }
-
     // different node types, replace element
     const parentElem = currentElement.parentElement;
 
@@ -212,7 +215,7 @@ export class AppCore {
     const newAttrsAsArr = Array.from(newAttrs);
     const oldAttrsAsArr = Array.from(oldAttrs);
 
-    const final = newAttrsAsArr.every((attr, i) => {
+    const finalCheck = newAttrsAsArr.every((attr, i) => {
       if (attr.nodeName === "class") return true;
 
       const n2ArrayElem = oldAttrsAsArr.find(
@@ -224,24 +227,21 @@ export class AppCore {
       );
     });
 
-    return final;
+    return finalCheck;
   }
 
   private assignAttributes(updatedElement: Element, currentElement: Element) {
     // reset attrs
     for (const attr of <any>currentElement.attributes) {
-      currentElement.removeAttribute(attr.name);
+      if (attr.name !== "class") currentElement.removeAttribute(attr.name);
     }
 
-    for (const attr of <any>updatedElement.attributes) {
-      if (attr.nodeName === "class") {
-        attr.nodeValue = attr.nodeValue
-          .split(" ")
-          .sort()
-          .join(" ");
-      }
+    currentElement.className = updatedElement.className;
 
-      currentElement.setAttribute(attr.nodeName, attr.nodeValue);
+    for (const attr of <any>updatedElement.attributes) {
+      if (attr.nodeName !== "class") {
+        currentElement.setAttribute(attr.nodeName, attr.nodeValue);
+      }
     }
   }
 }
