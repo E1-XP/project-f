@@ -10,19 +10,23 @@ export interface State {
   loadStatus: number;
   isMenuOpen: boolean;
   isSliderRunning: boolean;
+  isLightboxOpen: boolean;
   currentSlide: number;
   currentPart: number;
   images: ImageData[];
   extractedColors: any[];
+  slideInterval: number;
 }
 
 export const initialState: Partial<State> = {
   isLoading: true,
   loadStatus: 0,
   isMenuOpen: false,
-  isSliderRunning: true,
+  isSliderRunning: false,
+  isLightboxOpen: false,
   images: [],
   currentSlide: 0,
   currentPart: 1,
-  extractedColors: []
+  extractedColors: [],
+  slideInterval: 4500
 };

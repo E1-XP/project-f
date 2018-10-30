@@ -83,8 +83,6 @@ export class Model extends EventEmitter implements IModel {
     const keys = Object.keys(vDOM);
     const foundKey = keys.find(key => vDOM[key].ref === instance);
 
-    console.log(foundKey, vDOM, "FK");
-
     if (!keys.length) return;
     if (foundKey) return vDOM[foundKey];
 
@@ -99,7 +97,6 @@ export class Model extends EventEmitter implements IModel {
 
     const foundItem = this.findVDOMNode(parentRef, this.vDOM);
     if (!foundItem) {
-      console.log(this.vDOM);
       throw new Error(`vDOM item (${parentRef.constructor.name}) not found`);
     }
 
@@ -109,8 +106,6 @@ export class Model extends EventEmitter implements IModel {
   clearVDOMBranch(ref: IComponent) {
     const foundItem = this.findVDOMNode(ref, this.vDOM);
     if (!foundItem) {
-      // console.log(this.vDOM);
-      console.log(ref, "check");
       throw new Error(`vDOM item (${ref.constructor.name}) not found`);
     }
 
