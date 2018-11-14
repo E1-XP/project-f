@@ -1,6 +1,5 @@
 import { injectable } from "inversify";
 
-import { AppCore } from "./core";
 import { EventEmitter } from "./observer";
 import { State } from "./../store";
 import { IComponent } from "./component";
@@ -16,6 +15,7 @@ export interface IModel {
 export interface IvDOMItem {
   ref: IComponent;
   children: IvDOMLevel;
+  parent: IComponent;
 }
 
 export interface IvDOMLevel {
@@ -54,16 +54,16 @@ export class Model extends EventEmitter implements IModel {
 
   setState(updatedS: Partial<State>) {
     const noStateChanges = Object.entries(updatedS).every(
-      itm => this.state[itm[0]] === itm[1]
+      ([key, entry]) => this.state[key] === entry
     );
 
     if (noStateChanges) return this.state;
 
     this.state = Object.assign({}, this.state, updatedS);
 
-    this.emit(Object.keys(updatedS));
+    console.log("UPDATED STATE:", updatedS, this.state);
 
-    console.log("UPDATED STATE:", this.state);
+    this.emit(Object.keys(updatedS));
 
     return this.state;
   }
@@ -79,7 +79,7 @@ export class Model extends EventEmitter implements IModel {
     return this.vDOM;
   }
 
-  findVDOMNode(instance: IComponent, vDOM: IvDOMLevel): IvDOMItem | undefined {
+  findVDOMNode(instance: IComponent, vDOM = this.vDOM): IvDOMItem | undefined {
     const keys = Object.keys(vDOM);
     const foundKey = keys.find(key => vDOM[key].ref === instance);
 
@@ -89,18 +89,18 @@ export class Model extends EventEmitter implements IModel {
     return keys.map(key => this.findVDOMNode(instance, vDOM[key].children))[0];
   }
 
-  appendToVDOM(ref: IComponent, parentRef?: IComponent) {
-    if (!Object.keys(this.vDOM).length || parentRef === undefined) {
-      this.vDOM[ref.domId] = { ref, children: {} };
+  appendToVDOM(ref: IComponent, parentRef?: IComponent, vDOM = this.vDOM) {
+    if (!Object.keys(vDOM).length || parentRef === undefined) {
+      vDOM[ref.domId] = { ref, children: {}, parent: null };
       return;
     }
 
-    const foundItem = this.findVDOMNode(parentRef, this.vDOM);
+    const foundItem = this.findVDOMNode(parentRef, vDOM);
     if (!foundItem) {
       throw new Error(`vDOM item (${parentRef.constructor.name}) not found`);
     }
 
-    foundItem.children[ref.domId] = { ref, children: {} };
+    foundItem.children[ref.domId] = { ref, children: {}, parent: parentRef };
   }
 
   clearVDOMBranch(ref: IComponent) {

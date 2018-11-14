@@ -10,7 +10,15 @@ import { IComponent } from "./component";
 
 @injectable()
 export class AppCore {
-  run(component: any, parentInstance?: IComponent): string {
+  tmpVDOMFragment: IvDOMLevel = {};
+  isComparingVDOMs = false;
+
+  constructor() {
+    this.run = this.run.bind(this);
+    this.rerender = this.rerender.bind(this);
+  }
+
+  run(component: any, parentInstance?: IComponent) {
     const model = container.get<Model>(types.Model);
     const router = container.get<Router>(types.Router);
 
@@ -18,10 +26,13 @@ export class AppCore {
 
     model.subscribe(instance);
 
-    model.appendToVDOM(instance, parentInstance || undefined);
+    const vDOM = this.isComparingVDOMs ? this.tmpVDOMFragment : model.getVDOM();
+
+    model.appendToVDOM(instance, parentInstance || undefined, vDOM);
+
     console.log("vdom", model.getVDOM());
 
-    setTimeout(instance.onMount, 0);
+    if (!this.isComparingVDOMs) setTimeout(instance.onMount, 0);
 
     console.log(`${instance.constructor.name} Mounted`);
 
@@ -39,15 +50,28 @@ export class AppCore {
 
     const model = container.get<Model>(types.Model);
     const vDOM = model.getVDOM();
+    console.log(vDOM);
+
+    this.isComparingVDOMs = true; // start generating vDOMFragment
+
+    model.appendToVDOM(instance, undefined, this.tmpVDOMFragment);
 
     const vDOMNode = model.findVDOMNode(instance, vDOM);
-    const vDOMChildren = vDOMNode ? vDOMNode.children : {};
+    if (!vDOMNode) throw new Error(`can't find instance in vDOM`);
 
-    this.unsubscribeChildren(vDOMChildren);
+    this.unsubscribeChildren(vDOMNode.children);
+
+    const template: any = instance.render(); // multiple run fn calls expected inside render
+
+    this.isComparingVDOMs = false; ////// end
     model.clearVDOMBranch(instance);
+    vDOMNode.children = this.tmpVDOMFragment[instance.domId].children; // set updated children
 
-    const template: any = instance.render().content;
-    template.firstElementChild.setAttribute(
+    this.callLifecycleInRerenderedChildren(vDOMNode);
+
+    this.tmpVDOMFragment = {}; // reset temporary vDOM
+
+    template.content.firstElementChild.setAttribute(
       "data-id",
       instance.domId.toString()
     );
@@ -56,9 +80,18 @@ export class AppCore {
       `[data-id='${instance.domId}']`
     );
 
-    this.updateDOM(mountedElem, template);
+    this.updateDOM(mountedElem, template.content);
 
     instance.onUpdate();
+  }
+
+  private callLifecycleInRerenderedChildren(vDOMItem: IvDOMItem) {
+    Object.keys(vDOMItem.children).forEach(key => {
+      // const selectedMethod = false ? "onUpdate" : "onMount";
+      setTimeout(vDOMItem.children[key].ref.onMount, 0);
+
+      this.callLifecycleInRerenderedChildren(vDOMItem.children[key]);
+    });
   }
 
   private unsubscribeChildren(vDOMChildren: IvDOMLevel) {
@@ -78,6 +111,17 @@ export class AppCore {
     Object.keys(vDOMChildren).forEach(key => {
       unsubChild(vDOMChildren[key]);
     });
+  }
+
+  private cloneVDOM(vDOM: IvDOMLevel) {
+    // we don't want deep copy, component refs must stay same
+    const copy = Object.assign({}, vDOM);
+
+    Object.keys(copy).forEach(key => {
+      copy[key].children = this.cloneVDOM(copy[key].children);
+    });
+
+    return copy;
   }
 
   private updateDOM(currentElement: Element, updatedTemplate: Element) {

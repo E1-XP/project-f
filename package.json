@@ -12,12 +12,14 @@
   "license": "ISC",
   "dependencies": {
     "inversify": "^4.13.0",
+    "lodash.clonedeep": "^4.5.0",
     "node-vibrant": "^3.0.0",
     "node.normalize.scss": "^3.0.3",
     "reflect-metadata": "^0.1.12",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
+    "@types/lodash.clonedeep": "^4.5.4",
     "@types/node": "^10.9.4",
     "awesome-typescript-loader": "^5.2.0",
     "css-loader": "^1.0.0",
