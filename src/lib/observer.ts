@@ -23,7 +23,7 @@ export abstract class EventEmitter implements IEventEmitter {
   constructor(@inject(types.AppCore) private core: AppCore) {}
 
   subscribe(ref: IComponent) {
-    if (this.listeners.filter(itm => itm.ref === ref).length) return;
+    if (this.listeners.find(itm => itm.ref === ref)) return;
 
     this.listeners.push({ ref, props: ref.props });
     console.log("ADDED LISTENER", this.listeners);
