@@ -10,7 +10,7 @@ export class Helpers {
 
   renderToDOM(app: IComponent, htmlContainer: HTMLElement) {
     const template = document.createElement("template");
-    template.innerHTML = this.core.run(app);
+    template.innerHTML = this.core.run(app, "a");
 
     htmlContainer.innerHTML = "";
     htmlContainer.appendChild(template.content);

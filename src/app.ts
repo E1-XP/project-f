@@ -13,7 +13,7 @@ export class App extends Component {
 
     return html`
         <div class="container">
-            ${isLoading ? run(Preloader, this) : run(Page, this)}
+            ${isLoading ? run(Preloader, "pr", this) : run(Page, "pa", this)}
         </div>`;
   }
 }
