@@ -14,6 +14,7 @@ export interface IModel {
 
 export interface IvDOMItem {
   ref: IComponent;
+  key: string | undefined;
   children: IvDOMLevel;
   parent: IComponent;
 }
@@ -89,9 +90,14 @@ export class Model extends EventEmitter implements IModel {
     return keys.map(key => this.findVDOMNode(instance, vDOM[key].children))[0];
   }
 
-  appendToVDOM(ref: IComponent, parentRef?: IComponent, vDOM = this.vDOM) {
+  appendToVDOM(
+    ref: IComponent,
+    key?: string,
+    parentRef?: IComponent,
+    vDOM = this.vDOM
+  ) {
     if (!Object.keys(vDOM).length || parentRef === undefined) {
-      vDOM[ref.domId] = { ref, children: {}, parent: null };
+      vDOM[ref.domId] = { ref, key, children: {}, parent: null };
       return;
     }
 
@@ -100,7 +106,21 @@ export class Model extends EventEmitter implements IModel {
       throw new Error(`vDOM item (${parentRef.constructor.name}) not found`);
     }
 
-    foundItem.children[ref.domId] = { ref, children: {}, parent: parentRef };
+    const p = (o: any) => {
+      Object.keys(o).forEach(key => {
+        console.log(o[key]);
+        p(o[key].children);
+      });
+    };
+
+    foundItem.children[ref.domId] = {
+      ref,
+      key,
+      children: {},
+      parent: parentRef
+    };
+    console.log("log on append");
+    p(vDOM);
   }
 
   clearVDOMBranch(ref: IComponent) {

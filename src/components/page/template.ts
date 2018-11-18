@@ -13,23 +13,23 @@ import { Footer } from "./../footer";
 
 export default ({ parentRef, isMenuOpen, currentPart }: Props) => html`
     <div ${isMenuOpen && 'class="is-open"'}>
-        ${run(PageBackgrounds, parentRef)}
+        ${run(PageBackgrounds, "pb", parentRef)}
         <div class="l-page_container${isMenuOpen && " is-open"}">
-            ${run(Header, parentRef)}
+            ${run(Header, "h", parentRef)}
             <main>
                 ${
                   currentPart && currentPart !== 5
-                    ? run(Slider, parentRef)
-                    : run(CompareSlider, parentRef)
+                    ? run(Slider, "s", parentRef)
+                    : run(CompareSlider, "cs", parentRef)
                 }
                 ${currentPart &&
                   currentPart !== 5 &&
-                  run(BeforeAfterAd, parentRef)}
+                  run(BeforeAfterAd, "baa", parentRef)}
             </main>
-            ${run(SocialLinks, parentRef)}
-            ${run(Footer, parentRef)}
+            ${run(SocialLinks, "sl", parentRef)}
+            ${run(Footer, "f", parentRef)}
             ${isMenuOpen && '<div class="page__button" id="js-page-btn"></div>'}
         </div>
-        ${isMenuOpen && run(Navigation, parentRef)}
+        ${isMenuOpen && run(Navigation, "n", parentRef)}
     </div>
 `;

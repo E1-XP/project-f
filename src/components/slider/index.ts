@@ -17,9 +17,6 @@ export interface Props {
 export class Slider extends Component {
   props = ["images", "currentSlide", "isSliderRunning", "isLightboxOpen"];
 
-  slides: HTMLImageElement[] = [];
-  sliderInterval: any = null;
-
   backBtn: HTMLElement | null = null;
   stopStartBtn: HTMLElement | null = null;
   getFullSizeBtn: HTMLElement | null = null;
@@ -37,21 +34,20 @@ export class Slider extends Component {
     this.toggleLightboxBtn = document.getElementById("js-slider-fullscreen");
     this.likeBtn = document.getElementById("js-likes-btn");
 
-    this.slides = Array.from(document.querySelectorAll(".image_slider img"));
-
     this.appendListeners();
     this.stopStartSlider();
     console.log("MOUNTED SLIDER");
   };
 
   onUnmount = () => {
-    console.log("UNMOUNTING SLIDER");
+    console.log("UNMOUNTED SLIDER");
     this.detachListeners();
+    this.stopSlider();
   };
 
   onUpdate = () => {
     const { isLightboxOpen } = this.model.getState();
-
+    console.log("UPDATED SLIDER");
     if (isLightboxOpen) {
       this.lightboxElem &&
         this.lightboxElem.addEventListener("click", this.toggleLightbox);
@@ -148,12 +144,19 @@ export class Slider extends Component {
 
     console.log(!isSliderRunning, (<any>window).sliderInterval);
 
-    (<any>window).sliderInterval
-      ? clearInterval((<any>window).sliderInterval)
-      : ((<any>window).sliderInterval = setInterval(
-          handleClick,
-          slideInterval
-        ));
+    if ((<any>window).sliderInterval) {
+      clearInterval((<any>window).sliderInterval);
+    } else {
+      (<any>window).sliderInterval = setInterval(handleClick, slideInterval);
+    }
+  };
+
+  stopSlider = () => {
+    this.model.setState({ isSliderRunning: false });
+
+    if ((<any>window).sliderInterval) {
+      clearInterval((<any>window).sliderInterval);
+    }
   };
 
   enableKeySteering = (e: KeyboardEvent) => {
@@ -258,6 +261,7 @@ export class Slider extends Component {
     const currentSlide = Number(e.target.closest("li").dataset.idx);
 
     this.model.setState({ currentSlide });
+    this.stopSlider();
   };
 
   handleLikeClick = () => {
