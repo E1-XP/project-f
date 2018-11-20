@@ -20,10 +20,7 @@ export default ({
                   currentSlide !== undefined &&
                   currentSlide / 2 + 1 + " / " + images.length / 2}
             </div>
-            <p class="info__description">test description</p>
-                <button>
-                    reset
-                </button>
+            <p class="info__description--ba">test description</p>
          </section>
         <nav class="image_slider__navigation">
             <ul class="navigation__list">

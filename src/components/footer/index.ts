@@ -3,8 +3,6 @@ import { html } from "./../../lib";
 
 import { icon } from "./../shared";
 
-export interface Props {}
-
 export class Footer extends Component {
   onMount = () => {
     const btn = document.getElementById("js-to-top");
@@ -19,9 +17,11 @@ export class Footer extends Component {
   handleClick = () => {
     type n = number;
     // by R. Penner http://gizma.com/easing/
-    const easeInQuad = function(t: n, b: n, c: n, d: n) {
-      t /= d;
-      return c * t * t + b;
+    const easeInOutQuad = function(t: n, b: n, c: n, d: n) {
+      t /= d / 2;
+      if (t < 1) return (c / 2) * t * t + b;
+      t--;
+      return (-c / 2) * (t * (t - 2) - 1) + b;
     };
 
     const scrollTo = (element: Element, top: number, duration: number) => {
@@ -30,7 +30,7 @@ export class Footer extends Component {
       let lastTStamp: number | null = null;
 
       const moveScroll = (timeLeft: number = 0) => {
-        const calcPos = easeInQuad(timeLeft, start, difference, duration);
+        const calcPos = easeInOutQuad(timeLeft, start, difference, duration);
         element.scrollTop = calcPos;
 
         timeLeft < duration &&

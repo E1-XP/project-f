@@ -29,7 +29,7 @@ export const getImages = (part: number) =>
       images.sort((a, b) => a.id - b.id).map((image, i) => {
         const img = new Image();
 
-        img.addEventListener("load", (e: any) => {
+        const handleLoad = (e: any) => {
           vibrant
             .from(img.src)
             .getPalette()
@@ -37,7 +37,9 @@ export const getImages = (part: number) =>
               extractedColors[i] = result;
 
               counter += 1;
-              const loadStatus = Math.floor((counter / images.length) * 100);
+              const loadStatus = Math.floor(
+                (counter / (images.length * 2)) * 100
+              );
 
               if (loadStatus === 100) {
                 model.setState({
@@ -52,11 +54,45 @@ export const getImages = (part: number) =>
 
               model.setState({ loadStatus });
             });
-        });
+        };
+
+        const handleThumbnail = (e: any) => {
+          const thumb = new Image();
+
+          thumb.addEventListener("load", handleLoad);
+
+          thumb.src = `${URL}/${image.thumbnail}`;
+
+          counter += 1;
+          const loadStatus = Math.floor((counter / (images.length * 2)) * 100);
+
+          model.setState({ loadStatus });
+        };
+
+        img.addEventListener("load", handleThumbnail);
 
         img.src = `${URL}/${image.dir}`;
       });
     });
+
+export const getMenuImages = () => {
+  const URL = "https://boiling-citadel-14104.herokuapp.com";
+
+  const backgrounds = [
+    `${URL}/static/img/1/kr048.jpg`,
+
+    `${URL}/static/img/2/bt52Mo.jpg`,
+
+    `${URL}/static/img/3/917v2c222.jpg`,
+
+    `${URL}/static/img/4/S1PP2.jpg`
+  ];
+
+  backgrounds.forEach(url => {
+    const image = new Image();
+    image.src = url;
+  });
+};
 
 export const addLike = (part: number, currentImage: number) =>
   fetch(`${URL}/likes/new/${part}/${currentImage}/`, {

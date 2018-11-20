@@ -21,7 +21,7 @@
         height: 140px;
     }
     &__background {
-        background-image: url("https://www.imageupload.co.uk/images/2018/09/29/ba3.png");
+        background-image: url("/assets/img/ba3.png");
         height: 100%;
         position: absolute;
         width: 515px;
@@ -50,7 +50,7 @@
         margin-left: 2rem;
         max-width: 42rem;
         margin-top: 2rem;
-        text-shadow: -1px -1px #333;
+        text-shadow: 2px 2px #111;
         z-index: 50;
         position: relative;
         @media only screen and (max-width: 750px) {
