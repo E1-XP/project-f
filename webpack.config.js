@@ -1,4 +1,5 @@
 const htmlWebpackPlugin = require("html-webpack-plugin");
+const uglifyJSPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.ts",
@@ -16,11 +17,17 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: ["style-loader", "css-loader", "sass-loader"]
+        use: ["style-loader", "css-loader", "resolve-url-loader", "sass-loader"]
       },
       {
-        test: /\.hbs$/,
-        use: ["handlebars-loader"]
+        test: /\.(png|svg|jpg|gif)$/,
+        use: {
+          loader: "file-loader",
+          options: {
+            outputPath: "../",
+            publicPath: "/public"
+          }
+        }
       }
     ]
   },
@@ -33,6 +40,20 @@ module.exports = {
       filename: "./index.html"
     })
   ],
+  optimization: {
+    minimizer: [
+      new uglifyJSPlugin({
+        uglifyOptions: {
+          compress: {
+            drop_console: true
+          },
+          output: {
+            comments: false
+          }
+        }
+      })
+    ]
+  },
   devServer: {
     contentBase: "./public"
   }

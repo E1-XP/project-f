@@ -31,10 +31,6 @@ export class CompareSlider extends Component {
     this.addThumbnailListeners();
   };
 
-  onUpdate = () => {
-    this.onMount();
-  };
-
   onUnmount = () => {
     this.removeThumbnailListeners();
 

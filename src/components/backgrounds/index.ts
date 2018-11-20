@@ -31,14 +31,19 @@ export class PageBackgrounds extends Component {
       return extractedColors[currentSlide].Vibrant._rgb.join(",");
     })();
 
+    const val3 = (() => {
+      // const darkVibrant = extractedColors[currentSlide].DarkVibrant;
+      // if (darkVibrant) return darkVibrant._rgb.join(",");
+      return "15, 15, 15";
+    })();
+
     this.prevActiveStyle = this.active
       ? <string>this.active.style.background
       : "";
 
-    const template = (val: string, val2: string) =>
-      `linear-gradient(to top,#232526, rgb(${val}),rgb(${val2}))`;
+    const template = `linear-gradient(to top, rgb(${val3}) , rgb(${val}), rgb(${val2}))`;
 
-    return { active: template(val, val2), back: this.prevActiveStyle };
+    return { active: template, back: this.prevActiveStyle };
   };
 
   render() {

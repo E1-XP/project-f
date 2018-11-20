@@ -11,3 +11,23 @@
   width: 1px;
   white-space: nowrap;
 }
+
+.h-mleft--05 {
+  margin-left: 0.5rem;
+}
+
+@for $i from 1 through 5 {
+  .h-mleft--#{$i} {
+    margin-left: 0rem + $i;
+  }
+}
+
+.h-mright--05 {
+  margin-left: 0.5rem;
+}
+
+@for $i from 1 through 5 {
+  .h-mright--#{$i} {
+    margin-right: 0rem + $i;
+  }
+}

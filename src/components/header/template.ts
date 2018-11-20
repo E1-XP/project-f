@@ -24,18 +24,18 @@ const baMenu = () => html`
             <li class="navigation__item">
                 <a id="js-before-after">
                     Return to gallery
-                    <span class="material-icons">arrow_forward</span>
+                    <span class="material-icons h-mleft--05">arrow_forward</span>
                 </a>
             </li>
         </ul>
     </nav>
 `;
-
+console.log(window.location.hostname);
 export default ({ getPartName, currentPart }: Props) => html`
     <header class="page_header">
             <h1 class="page_header__logo">
                 <a id="js-header-logo">
-                    <img src="https://www.imageupload.co.uk/images/2018/09/28/main.png" alt="GTxMotorsports">
+                    <img src="/assets/img/main.png" alt="GTxMotorsports">
                 </a>             
             </h1>     
              ${

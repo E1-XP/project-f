@@ -1,5 +1,7 @@
 import { Component, IComponent } from "./../../lib/component";
 
+import * as effects  from './../../effects';
+
 import template from "./template";
 
 export interface Props {
@@ -13,9 +15,9 @@ export class Page extends Component {
 
   pageBtn: HTMLElement | null = null;
 
-  onMount = () => {
-    this.attachHandlers();
-  };
+  onMount =()=>{
+    effects.getMenuImages();
+  }
 
   onUpdate = () => {
     this.attachHandlers();

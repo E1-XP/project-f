@@ -24,6 +24,7 @@ export class Slider extends Component {
   lightboxElem: HTMLElement | null = null;
   nextBtn: HTMLElement | null = null;
   likeBtn: HTMLElement | null = null;
+  progressBar: HTMLElement | null = null;
 
   onMount = () => {
     this.backBtn = document.getElementById("js-slider-back");
@@ -33,27 +34,30 @@ export class Slider extends Component {
     this.lightboxElem = document.getElementById("js-lightbox")!;
     this.toggleLightboxBtn = document.getElementById("js-slider-fullscreen");
     this.likeBtn = document.getElementById("js-likes-btn");
+    this.progressBar = document.querySelector(".navigation__progress");
 
     this.appendListeners();
     this.stopStartSlider();
-    console.log("MOUNTED SLIDER");
   };
 
   onUnmount = () => {
-    console.log("UNMOUNTED SLIDER");
     this.detachListeners();
     this.stopSlider();
   };
 
   onUpdate = () => {
-    const { isLightboxOpen } = this.model.getState();
-    console.log("UPDATED SLIDER");
+    const { isLightboxOpen, isSliderRunning } = this.model.getState();
+
     if (isLightboxOpen) {
       this.lightboxElem &&
         this.lightboxElem.addEventListener("click", this.toggleLightbox);
     } else {
       this.lightboxElem &&
         this.lightboxElem.removeEventListener("click", this.toggleLightbox);
+    }
+
+    if (isSliderRunning && this.progressBar) {
+      setTimeout(() => this.progressBar!.classList.add("is-open"), 400);
     }
   };
 
@@ -107,11 +111,12 @@ export class Slider extends Component {
       this.lightboxElem.removeEventListener("click", this.toggleLightbox);
 
     document.removeEventListener("keydown", this.enableKeySteering);
+
     this.removeThumbnailListeners();
   };
 
-  nextSlide = () => {
-    const { currentSlide, images } = this.model.getState();
+  nextSlide = (e: any) => {
+    const { currentSlide, images, isSliderRunning } = this.model.getState();
 
     if (currentSlide === undefined || !images) {
       throw new Error("store probably crashed");
@@ -121,6 +126,16 @@ export class Slider extends Component {
     this.model.setState({
       currentSlide: onLastSlide ? 0 : currentSlide + 1
     });
+
+    if (isSliderRunning && this.progressBar) {
+      if (this.progressBar.classList.contains("is-open")) {
+        this.progressBar.classList.remove("is-open");
+      }
+    }
+
+    if (e.type !== "click" || (e.screenX && e.screenY)) {
+      this.stopSlider();
+    }
   };
 
   prevSlide = () => {
@@ -132,8 +147,15 @@ export class Slider extends Component {
     const inFirstSlide = currentSlide === 0;
 
     this.model.setState({
+      isSliderRunning: false,
       currentSlide: inFirstSlide ? images.length - 1 : currentSlide + -1
     });
+
+    if ((<any>window).sliderInterval) {
+      clearInterval((<any>window).sliderInterval);
+      (<any>window).sliderInterval = 0;
+    }
+    this.progressBar!.classList.remove("is-open");
   };
 
   stopStartSlider = () => {
@@ -142,12 +164,12 @@ export class Slider extends Component {
 
     this.model.setState({ isSliderRunning: !isSliderRunning });
 
-    console.log(!isSliderRunning, (<any>window).sliderInterval);
-
     if ((<any>window).sliderInterval) {
       clearInterval((<any>window).sliderInterval);
+      (<any>window).sliderInterval = 0;
     } else {
       (<any>window).sliderInterval = setInterval(handleClick, slideInterval);
+      setTimeout(() => this.progressBar!.classList.add("is-open"), 400);
     }
   };
 
@@ -156,13 +178,15 @@ export class Slider extends Component {
 
     if ((<any>window).sliderInterval) {
       clearInterval((<any>window).sliderInterval);
+      (<any>window).sliderInterval = 0;
     }
+    this.progressBar!.classList.remove("is-open");
   };
 
   enableKeySteering = (e: KeyboardEvent) => {
     switch (e.keyCode) {
       case 39:
-        this.nextSlide();
+        this.nextSlide(e);
         return;
       case 37:
         this.prevSlide();
@@ -260,8 +284,13 @@ export class Slider extends Component {
   handleThumbnailClick = (e: any) => {
     const currentSlide = Number(e.target.closest("li").dataset.idx);
 
-    this.model.setState({ currentSlide });
-    this.stopSlider();
+    this.model.setState({ currentSlide, isSliderRunning: false });
+
+    if ((<any>window).sliderInterval) {
+      clearInterval((<any>window).sliderInterval);
+      (<any>window).sliderInterval = 0;
+    }
+    this.progressBar!.classList.remove("is-open");
   };
 
   handleLikeClick = () => {
