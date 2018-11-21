@@ -22,7 +22,9 @@ export default ({
             ${images && getImageList()}
             </ul> 
             <nav class="content__navigation">
-                <div class="navigation__progress"></div>
+                <div class="navigation__progress ${
+                  isSliderRunning ? "is-open" : ""
+                }"></div>
                 <div class="slide__button--left" id="js-slider-back">
                     <span class="material-icons icon">arrow_back_ios</span>
                 </div>

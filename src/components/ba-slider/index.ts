@@ -58,14 +58,21 @@ export class CompareSlider extends Component {
     this.onMouseMove = throttle(this.onMouseMove, 10);
 
     window.addEventListener("mousemove", this.onMouseMove);
+    window.addEventListener("touchmove", this.onMouseMove);
     window.addEventListener("mouseup", this.onMouseUp);
+    window.addEventListener("touchend", this.onMouseUp);
   };
 
   getWidth = (e: any) => {
     if (!this.beforeDiv) throw new Error("DOM sync error in ba-slider");
 
     const beforeDivDim = this.beforeDiv.getBoundingClientRect();
-    const newPos = e.pageX - beforeDivDim.left;
+    const newPos = (() => {
+      if (e.type === "touchmove") {
+        return e.touches[0].pageX - beforeDivDim.left;
+      }
+      return e.pageX - beforeDivDim.left;
+    })();
 
     if (newPos > beforeDivDim.width) return 100;
     if (newPos < 0) return 0;
@@ -78,6 +85,7 @@ export class CompareSlider extends Component {
 
   onMouseUp = () => {
     window.removeEventListener("mousemove", this.onMouseMove);
+    window.removeEventListener("touchmove", this.onMouseMove);
   };
 
   getClassNames = (idx: number) => {

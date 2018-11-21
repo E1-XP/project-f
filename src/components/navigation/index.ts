@@ -38,14 +38,17 @@ export class Navigation extends Component {
   };
 
   handleMenuClick = (e: any) => {
+    const { currentPart } = this.model.getState();
+
     const parts = ["one", "two", "three", "four"];
-    const currentPart = Number(e.target.closest("li").dataset.idx);
+    const clickedPart = Number(e.target.closest("li").dataset.idx);
+    const differentPart = clickedPart + 1 !== currentPart;
 
     const deferRouteChange = () =>
-      this.router.routeTo(`/${parts[currentPart]}`);
+      this.router.routeTo(`/${parts[clickedPart]}`);
 
     this.model.setState({ isMenuOpen: false });
-    setTimeout(deferRouteChange, 500);
+    if (differentPart) setTimeout(deferRouteChange, 500);
   };
 
   getMenuItems = () => {
@@ -54,9 +57,9 @@ export class Navigation extends Component {
     return this.backgrounds.map((itm, i) => {
       const shouldHide = currentPart === i + 1;
 
-      return `<li class="list__item " ${
-        shouldHide ? 'style="display:none"' : ""
-      } data-idx=${i}>
+      return `<li class="list__item ${
+        shouldHide ? "active" : ""
+      }" data-idx=${i}>
             <a id="js-menu-item-${i + 1}">
               <span style="background:url(${itm})">${i + 1}</span>
             </a>
