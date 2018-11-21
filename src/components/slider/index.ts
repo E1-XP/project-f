@@ -57,7 +57,7 @@ export class Slider extends Component {
     }
 
     if (isSliderRunning && this.progressBar) {
-      setTimeout(() => this.progressBar!.classList.add("is-open"), 400);
+      setTimeout(() => this.progressBar!.classList.add("is-open"), 500);
     }
   };
 
@@ -169,7 +169,7 @@ export class Slider extends Component {
       (<any>window).sliderInterval = 0;
     } else {
       (<any>window).sliderInterval = setInterval(handleClick, slideInterval);
-      setTimeout(() => this.progressBar!.classList.add("is-open"), 400);
+      this.progressBar!.classList.add("is-open--start");
     }
   };
 

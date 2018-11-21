@@ -35,7 +35,7 @@ export default ({ getPartName, currentPart }: Props) => html`
     <header class="page_header">
             <h1 class="page_header__logo">
                 <a id="js-header-logo">
-                    <img src="/assets/img/main.png" alt="GTxMotorsports">
+                    <img src="/GTxM-front/assets/img/main.png" alt="GTxMotorsports">
                 </a>             
             </h1>     
              ${
