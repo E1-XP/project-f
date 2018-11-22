@@ -82,6 +82,7 @@ export class Slider extends Component {
     this.likeBtn.addEventListener("click", this.handleLikeClick);
 
     document.addEventListener("keydown", this.enableKeySteering);
+    document.addEventListener("visibilitychange", this.handleTabChange);
     this.addThumbnailListeners();
   };
 
@@ -111,8 +112,14 @@ export class Slider extends Component {
       this.lightboxElem.removeEventListener("click", this.toggleLightbox);
 
     document.removeEventListener("keydown", this.enableKeySteering);
+    document.removeEventListener("visibilitychange", this.handleTabChange);
 
     this.removeThumbnailListeners();
+  };
+
+  handleTabChange = () => {
+    if (document.visibilityState === "hidden") this.stopSlider();
+    else setTimeout(() => this.stopStartSlider(), 500);
   };
 
   nextSlide = (e: any) => {

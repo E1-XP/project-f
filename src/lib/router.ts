@@ -32,20 +32,20 @@ export class Router {
   routeTo(path: string) {
     const model = container.get<Model>(types.Model);
 
-    const preparedPath = path.replace("/GTxM-front", "");
+    const handleGHPages = path.replace("/GTxM-front", "");
 
-    if (!this.routes[preparedPath]) {
+    if (!this.routes[handleGHPages]) {
       throw new Error(
-        `Path ${preparedPath} not found. Please register route first.`
+        `Path ${handleGHPages} not found. Please register route first.`
       );
     }
 
     window.history.pushState(
       null,
-      preparedPath,
-      `${window.location.origin}/GTxM-front${preparedPath}`
+      handleGHPages,
+      `${window.location.origin}/GTxM-front${handleGHPages}`
     );
 
-    model.setState(this.routes[preparedPath]());
+    model.setState(this.routes[handleGHPages]());
   }
 }

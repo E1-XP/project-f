@@ -22,18 +22,18 @@ export abstract class EventEmitter implements IEventEmitter {
 
   constructor(@inject(types.AppCore) private core: AppCore) {}
 
-  subscribe(ref: IComponent) {
+  subscribe = (ref: IComponent) => {
     if (this.listeners.find(itm => itm.ref === ref)) return;
 
     this.listeners.push({ ref, props: ref.props });
     console.log("ADDED LISTENER", this.listeners);
-  }
+  };
 
-  unsubscribe(ref: IComponent) {
+  unsubscribe = (ref: IComponent) => {
     this.listeners = this.listeners.filter(itm => itm.ref !== ref);
-  }
+  };
 
-  emit(propKeys: string[]) {
+  emit = (propKeys: string[]) => {
     console.log("RUN EMIT aka STATE CHANGED", this.listeners);
     // only if props match
     this.listeners.forEach(itm => {
@@ -45,5 +45,5 @@ export abstract class EventEmitter implements IEventEmitter {
         should && this.core.rerender(ref);
       }
     });
-  }
+  };
 }
