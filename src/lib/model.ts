@@ -80,14 +80,30 @@ export class Model extends EventEmitter implements IModel {
     return this.vDOM;
   }
 
-  findVDOMNode(instance: IComponent, vDOM = this.vDOM): IvDOMItem | undefined {
-    const keys = Object.keys(vDOM);
-    const foundKey = keys.find(key => vDOM[key].ref === instance);
+  findVDOMNode(
+    instance: IComponent,
+    vDOM: IvDOMLevel = this.vDOM
+  ): IvDOMItem | undefined {
+    const queue: IvDOMItem[] = [];
+    let checkedElem: IvDOMItem | undefined;
 
-    if (!keys.length) return;
-    if (foundKey) return vDOM[foundKey];
+    const innerFn = (child: IvDOMItem) => {
+      if (child.ref === instance) return child;
+      return undefined;
+    };
 
-    return keys.map(key => this.findVDOMNode(instance, vDOM[key].children))[0];
+    Object.values(vDOM).forEach(child => queue.push(child));
+
+    while (queue.length) {
+      const currElem = queue.shift()!;
+
+      checkedElem = innerFn(currElem);
+      if (checkedElem) return checkedElem;
+
+      Object.values(currElem.children).forEach(child => queue.push(child));
+    }
+
+    return undefined;
   }
 
   appendToVDOM(
@@ -106,12 +122,12 @@ export class Model extends EventEmitter implements IModel {
       throw new Error(`vDOM item (${parentRef.constructor.name}) not found`);
     }
 
-    const p = (o: any) => {
-      Object.keys(o).forEach(key => {
-        console.log(o[key]);
-        p(o[key].children);
-      });
-    };
+    // const p = (o: any) => {
+    //   Object.keys(o).forEach(key => {
+    //     console.log(o[key]);
+    //     p(o[key].children);
+    //   });
+    // };
 
     foundItem.children[ref.domId] = {
       ref,
@@ -119,8 +135,8 @@ export class Model extends EventEmitter implements IModel {
       children: {},
       parent: parentRef
     };
-    console.log("log on append");
-    p(vDOM);
+    // console.log("log on append");
+    // p(vDOM);
   }
 
   clearVDOMBranch(ref: IComponent) {

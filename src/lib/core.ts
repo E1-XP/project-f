@@ -118,8 +118,9 @@ export class AppCore {
 
   private callOnUnmountInRemovedChildren = (vDOMChildren: IvDOMLevel) => {
     const model = container.get<Model>(types.Model);
+    const queue: IvDOMItem[] = [];
 
-    Object.values(vDOMChildren).forEach(child => {
+    const innerFn = (child: IvDOMItem) => {
       const should =
         !!child.parent && !model.findVDOMNode(child.ref, this.tmpVDOMFragment);
 
@@ -127,68 +128,78 @@ export class AppCore {
         console.log("now will call onumnount in", child.ref);
         child.ref.onUnmount();
       }
+    };
 
-      this.callOnUnmountInRemovedChildren(child.children);
-    });
+    Object.values(vDOMChildren).forEach(child => queue.push(child));
+
+    while (queue.length) {
+      const currElem = queue.shift()!;
+      innerFn(currElem);
+
+      Object.values(currElem.children).forEach(child => queue.push(child));
+    }
   };
 
   private callLifecycleInRerenderedChildren = (vDOMChildren: IvDOMLevel) => {
-    Object.values(vDOMChildren).forEach(child => {
+    const queue: IvDOMItem[] = [];
+
+    const innerFn = (child: IvDOMItem) => {
       const selectedMethod = this.willComponentExistInNextVDOM(child)
         ? "onUpdate"
         : "onMount";
 
       console.log(selectedMethod, "will be called on ", child.ref);
       setTimeout(child.ref[selectedMethod], 0);
+    };
 
-      this.callLifecycleInRerenderedChildren(child.children);
-    });
+    Object.values(vDOMChildren).forEach(child => queue.push(child));
+
+    while (queue.length) {
+      const currElem = queue.shift()!;
+      innerFn(currElem);
+
+      Object.values(currElem.children).forEach(child => queue.push(child));
+    }
   };
 
   private willComponentExistInNextVDOM(vDOMChild: IvDOMItem) {
     const model = container.get<Model>(types.Model);
-    // const vDOM = this.isComparingVDOMs ? this.tmpVDOMFragment : model.getVDOM();
-    const p = (o: any) => {
-      Object.keys(o).forEach(key => {
-        console.log(o[key]);
-        p(o[key].children);
-      });
-    };
-    console.log("will log tmp");
-    p(this.tmpVDOMFragment);
-    console.log("will log vdom");
-    p(model.getVDOM());
-    // if (!this.isComparingVDOMs) return false;
-    console.log(vDOMChild, model.getVDOM());
+
+    // const p = (o: any) => {
+    //   Object.keys(o).forEach(key => {
+    //     console.log(o[key]);
+    //     p(o[key].children);
+    //   });
+    // };
+    // console.log("will log tmp");
+    // p(this.tmpVDOMFragment);
+    // console.log("will log vdom");
+    // p(model.getVDOM());
+
+    // console.log(vDOMChild, model.getVDOM());
 
     const previousElement = model.findVDOMNode(vDOMChild.ref);
-    // if (!previousElement) {
-    //   // console.log("parent not found!");
-    //   return true;
-    // }
 
-    // const existingInstance = Object.values(parent.children).find(
-    //   entry => entry.key === vDOMChild.key
-    // );
-    // console.log(existingInstance, "exis");
     return !!previousElement;
   }
 
   private unsubscribeChildren = (vDOMChildren: IvDOMLevel) => {
     const model = container.get<Model>(types.Model);
+    const queue: IvDOMItem[] = [];
 
     const unsubChild = (child: IvDOMItem) => {
       model.unsubscribe(child.ref);
       console.log("UNSUBSCRIBED: ", child.ref, model.listeners.length);
-
-      if (Object.keys(child.children).length) {
-        this.unsubscribeChildren(child.children);
-      }
     };
 
-    Object.keys(vDOMChildren).forEach(key => {
-      unsubChild(vDOMChildren[key]);
-    });
+    Object.values(vDOMChildren).forEach(child => queue.push(child));
+
+    while (queue.length) {
+      const currElem = queue.shift()!;
+      unsubChild(currElem);
+
+      Object.values(currElem.children).forEach(child => queue.push(child));
+    }
   };
 
   private cloneVDOM(vDOM: IvDOMLevel) {
