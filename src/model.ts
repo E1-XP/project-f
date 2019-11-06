@@ -4,10 +4,10 @@ import { EventEmitter } from "./observer";
 import { IComponent } from "./component";
 
 export interface IModel {
-  state: Partial<{}>;
-  createStore: (initialS?: Partial<{}>) => Partial<{}>;
-  getState: () => Partial<{}>;
-  setState: (updatedS: Partial<{}>) => void;
+  state: Partial<EmptyState>;
+  createStore: (initialS?: Partial<EmptyState>) => Partial<EmptyState>;
+  getState: () => Partial<EmptyState>;
+  setState: (updatedS: Partial<EmptyState>) => void;
   getDomId: () => number;
 }
 
@@ -22,7 +22,7 @@ export interface IvDOMLevel {
   [key: string]: IvDOMItem;
 }
 
-interface EmptyState {
+export interface EmptyState {
   [key: string]: any;
 }
 
@@ -33,7 +33,7 @@ export class Model extends EventEmitter implements IModel {
   private vDOM: any = {};
   state: EmptyState = {};
 
-  createStore(initialState?: Partial<{}>) {
+  createStore(initialState?: Partial<EmptyState>) {
     if (Object.keys(this.state).length) {
       throw new Error("Store is already initialized");
     }
@@ -52,7 +52,7 @@ export class Model extends EventEmitter implements IModel {
     return this.state;
   }
 
-  setState(updatedS: Partial<{}>) {
+  setState(updatedS: Partial<EmptyState>) {
     const noStateChanges = Object.entries(updatedS).every(
       ([key, entry]) => this.state[key] === entry
     );

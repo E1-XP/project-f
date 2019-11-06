@@ -3,7 +3,7 @@ import { types } from "./IOC/types";
 
 import { Helpers } from "./helpers";
 import { IComponent } from "./component";
-import { Model } from "./model";
+import { Model, EmptyState } from "./model";
 import { Router, IRoutes } from "./router";
 import { AppCore } from "./core";
 
@@ -11,7 +11,7 @@ export const initApp = (
   app: IComponent,
   root: HTMLElement,
   routes: IRoutes,
-  initialState?: Partial<{}>
+  initialState?: Partial<EmptyState>
 ) => {
   const model = container.get<Model>(types.Model);
   const router = container.get<Router>(types.Router);
@@ -26,6 +26,8 @@ export const initApp = (
   router.routeTo(handleRootRoute);
   helpers.renderToDOM(app, root);
 };
+
+export { Component } from "./component";
 
 export const { html, renderToDOM } = container.get<Helpers>(types.Helpers);
 export const { run, rerender } = container.get<AppCore>(types.AppCore);

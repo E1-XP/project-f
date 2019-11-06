@@ -2,10 +2,10 @@ import { injectable } from "inversify";
 
 import { container } from "./IOC";
 import { types } from "./IOC/types";
-import { Model } from "./model";
+import { Model, EmptyState } from "./model";
 
 export interface IRoutes {
-  [key: string]: () => Partial<{}>;
+  [key: string]: () => Partial<EmptyState>;
 }
 
 @injectable()
