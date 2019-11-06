@@ -1,14 +1,13 @@
 import { injectable } from "inversify";
 
 import { EventEmitter } from "./observer";
-import { State } from "./../store";
 import { IComponent } from "./component";
 
 export interface IModel {
-  state: Partial<State>;
-  createStore: (initialS?: Partial<State>) => Partial<State>;
-  getState: () => Partial<State>;
-  setState: (updatedS: Partial<State>) => void;
+  state: Partial<{}>;
+  createStore: (initialS?: Partial<{}>) => Partial<{}>;
+  getState: () => Partial<{}>;
+  setState: (updatedS: Partial<{}>) => void;
   getDomId: () => number;
 }
 
@@ -34,7 +33,7 @@ export class Model extends EventEmitter implements IModel {
   private vDOM: any = {};
   state: EmptyState = {};
 
-  createStore(initialState?: Partial<State>) {
+  createStore(initialState?: Partial<{}>) {
     if (Object.keys(this.state).length) {
       throw new Error("Store is already initialized");
     }
@@ -53,7 +52,7 @@ export class Model extends EventEmitter implements IModel {
     return this.state;
   }
 
-  setState(updatedS: Partial<State>) {
+  setState(updatedS: Partial<{}>) {
     const noStateChanges = Object.entries(updatedS).every(
       ([key, entry]) => this.state[key] === entry
     );

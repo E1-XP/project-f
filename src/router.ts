@@ -4,10 +4,8 @@ import { container } from "./IOC";
 import { types } from "./IOC/types";
 import { Model } from "./model";
 
-import { State } from "./../store";
-
 export interface IRoutes {
-  [key: string]: () => Partial<State>;
+  [key: string]: () => Partial<{}>;
 }
 
 @injectable()

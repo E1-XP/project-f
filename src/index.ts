@@ -1,14 +1,31 @@
-import { initApp } from "./lib";
+import { container } from "./IOC";
+import { types } from "./IOC/types";
 
-import { initialState } from "./store";
-import routes from "./routes";
+import { Helpers } from "./helpers";
+import { IComponent } from "./component";
+import { Model } from "./model";
+import { Router, IRoutes } from "./router";
+import { AppCore } from "./core";
 
-import { App } from "./app";
+export const initApp = (
+  app: IComponent,
+  root: HTMLElement,
+  routes: IRoutes,
+  initialState?: Partial<{}>
+) => {
+  const model = container.get<Model>(types.Model);
+  const router = container.get<Router>(types.Router);
+  const helpers = container.get<Helpers>(types.Helpers);
 
-import "./scss/main.scss";
+  model.createStore(initialState || undefined);
+  router.registerRoutes(routes);
 
-const appInit = () => {
-  initApp(<any>App, document.getElementById("root")!, routes, initialState);
+  const currRoute = window.location.pathname;
+  const handleRootRoute = currRoute === "/" ? "/one" : currRoute;
+
+  router.routeTo(handleRootRoute);
+  helpers.renderToDOM(app, root);
 };
 
-document.addEventListener("DOMContentLoaded", appInit);
+export const { html, renderToDOM } = container.get<Helpers>(types.Helpers);
+export const { run, rerender } = container.get<AppCore>(types.AppCore);
