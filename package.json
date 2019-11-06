@@ -5,11 +5,11 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
+    "postinstall": "tsc",
     "start": "webpack-dev-server --config ./webpack.config.js --mode development --history-api-fallback",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production"
   },
-  "prepublish": "tsc",
   "keywords": [],
   "author": "",
   "license": "ISC",
