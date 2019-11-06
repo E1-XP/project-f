@@ -27,7 +27,11 @@ export const initApp = (
   helpers.renderToDOM(app, root);
 };
 
-export { Component } from "./component";
+export { container } from "./IOC";
+export { types } from "./IOC/types";
+
+export { Model } from "./model";
+export { Component, IComponent } from "./component";
 
 export const { html, renderToDOM } = container.get<Helpers>(types.Helpers);
 export const { run, rerender } = container.get<AppCore>(types.AppCore);
