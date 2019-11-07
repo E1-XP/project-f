@@ -1,4 +1,3 @@
-const htmlWebpackPlugin = require("html-webpack-plugin");
 const uglifyJSPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
@@ -14,18 +13,13 @@ module.exports = {
         test: /\.ts$/,
         exclude: /node_modules/,
         use: ["awesome-typescript-loader"]
-      },
+      }
     ]
   },
   resolve: {
     extensions: ["*", ".js", ".ts"]
   },
-  plugins: [
-    new htmlWebpackPlugin({
-      template: "./public/index.html",
-      filename: "./index.html"
-    })
-  ],
+  plugins: [],
   optimization: {
     minimizer: [
       new uglifyJSPlugin({

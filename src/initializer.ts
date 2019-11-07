@@ -20,7 +20,7 @@ export const initApp = (
   router.registerRoutes(routes);
 
   const currRoute = window.location.pathname;
-  const handleRootRoute = currRoute === "/" ? "/one" : currRoute;
+  const handleRootRoute = currRoute === "/" ? Object.keys(routes)[0] : currRoute;
 
   router.routeTo(handleRootRoute);
   helpers.renderToDOM(app, root);
