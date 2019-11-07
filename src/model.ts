@@ -4,10 +4,9 @@ import { EventEmitter } from "./observer";
 import { IComponent } from "./component";
 
 export interface IModel {
-  state: Partial<EmptyState>;
-  createStore: (initialS?: Partial<EmptyState>) => Partial<EmptyState>;
-  getState: () => Partial<EmptyState>;
-  setState: (updatedS: Partial<EmptyState>) => void;
+  createStore<S = EmptyState>(initialS?: Partial<S>): Partial<S>;
+  getState<S = EmptyState>(): Partial<S>;
+  setState<S = EmptyState>(updatedS: Partial<S>): Partial<S>;
   getDomId: () => number;
 }
 
@@ -31,9 +30,9 @@ export class Model extends EventEmitter implements IModel {
   private isInitialized = false;
   private domCount = 0;
   private vDOM: any = {};
-  state: EmptyState = {};
+  private state: EmptyState = {};
 
-  createStore(initialState?: Partial<EmptyState>) {
+  createStore<S = EmptyState>(initialState?: Partial<S>) {
     if (Object.keys(this.state).length) {
       throw new Error("Store is already initialized");
     }
@@ -44,20 +43,20 @@ export class Model extends EventEmitter implements IModel {
 
     this.isInitialized = true;
 
-    return this.state;
+    return <Partial<S>>this.state;
   }
 
-  getState() {
+  getState<S = EmptyState>() {
     if (!this.isInitialized) throw new Error("Please initialize store first");
-    return this.state;
+    return <Partial<S>>this.state;
   }
 
-  setState(updatedS: Partial<EmptyState>) {
+  setState<S = EmptyState>(updatedS: Partial<S>): Partial<S> {
     const noStateChanges = Object.entries(updatedS).every(
       ([key, entry]) => this.state[key] === entry
     );
 
-    if (noStateChanges) return this.state;
+    if (noStateChanges) return <Partial<S>>this.state;
 
     this.state = Object.assign({}, this.state, updatedS);
 
@@ -65,7 +64,7 @@ export class Model extends EventEmitter implements IModel {
 
     this.emit(Object.keys(updatedS));
 
-    return this.state;
+    return <Partial<S>>this.state;
   }
 
   getDomId() {
