@@ -2,12 +2,10 @@ import { injectable } from "inversify";
 
 import { container } from "./IOC";
 import { types } from "./IOC/types";
-import { Model } from "./model";
-
-import { State } from "./../store";
+import { Model, EmptyState } from "./model";
 
 export interface IRoutes {
-  [key: string]: () => Partial<State>;
+  [key: string]: () => Partial<EmptyState>;
 }
 
 @injectable()
@@ -32,20 +30,12 @@ export class Router {
   routeTo(path: string) {
     const model = container.get<Model>(types.Model);
 
-    const handleGHPages = path.replace("/GTxM-front", "");
-
-    if (!this.routes[handleGHPages]) {
-      throw new Error(
-        `Path ${handleGHPages} not found. Please register route first.`
-      );
+    if (!this.routes[path]) {
+      throw new Error(`Path ${path} not found. Please register route first.`);
     }
 
-    window.history.pushState(
-      null,
-      handleGHPages,
-      `${window.location.origin}/GTxM-front${handleGHPages}`
-    );
+    window.history.pushState(null, "", `${window.location.origin}${path}`);
 
-    model.setState(this.routes[handleGHPages]());
+    model.setState(this.routes[path]());
   }
 }

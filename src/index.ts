@@ -1,14 +1,16 @@
-import { initApp } from "./lib";
+import { container } from "./IOC";
+import { types } from "./IOC/types";
 
-import { initialState } from "./store";
-import routes from "./routes";
+import { Helpers } from "./helpers";
+import { AppCore } from "./core";
 
-import { App } from "./app";
+export { container } from "./IOC";
+export { types } from "./IOC/types";
 
-import "./scss/main.scss";
+export { Model } from "./model";
+export { Component, IComponent } from "./component";
 
-const appInit = () => {
-  initApp(<any>App, document.getElementById("root")!, routes, initialState);
-};
+export const { html, renderToDOM } = container.get<Helpers>(types.Helpers);
+export const { run, rerender } = container.get<AppCore>(types.AppCore);
 
-document.addEventListener("DOMContentLoaded", appInit);
+export { initApp } from "./initializer";
