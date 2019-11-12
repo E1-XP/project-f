@@ -126,7 +126,7 @@ export class AppCore {
 
       if (should) {
         console.log("now will call onumnount in", child.ref);
-        child.ref.onUnmount();
+        child.ref.onUnmount.call(child.ref);
       }
     };
 
@@ -149,7 +149,7 @@ export class AppCore {
         : "onMount";
 
       console.log(selectedMethod, "will be called on ", child.ref);
-      setTimeout(child.ref[selectedMethod], 0);
+      setTimeout(child.ref[selectedMethod].bind(child.ref), 0);
     };
 
     Object.values(vDOMChildren).forEach(child => queue.push(child));

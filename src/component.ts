@@ -9,11 +9,11 @@ export interface IComponent {
   props: string[];
   model: IModel;
   domId: number;
-  onMount: () => void;
-  onUnmount: () => void;
-  onUpdate: () => void;
-  shouldUpdate: () => boolean;
-  render: () => HTMLTemplateElement;
+  onMount(): void;
+  onUnmount(): void;
+  onUpdate(): void;
+  shouldUpdate(): boolean;
+  render(): HTMLTemplateElement;
 }
 
 @injectable()
