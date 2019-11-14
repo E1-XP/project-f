@@ -34,7 +34,7 @@ export abstract class Component implements IComponent {
 
   onUnmount() {}
 
-  onUpdate() {}
+  onUpdate<S = EmptyState>(prevState: S, state: S) {}
 
   shouldUpdate() {
     return true;

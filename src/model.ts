@@ -27,12 +27,20 @@ export interface EmptyState {
   [key: string]: any;
 }
 
+type StateCb<S = EmptyState> = (prevS?: Partial<S>) => Partial<S>;
+
 @injectable()
 export class Model extends EventEmitter implements IModel {
   private isInitialized = false;
   private domCount = 0;
   private vDOM: any = {};
+
   private state: EmptyState = {};
+  private prevState: EmptyState = {};
+
+  constructor(core: AppCore) {
+    super(core);
+  }
 
   createStore<S = EmptyState>(initialState?: Partial<S>) {
     if (Object.keys(this.state).length) {
@@ -41,6 +49,7 @@ export class Model extends EventEmitter implements IModel {
 
     if (initialState) {
       this.state = Object.assign({}, this.state, initialState);
+      this.prevState = this.state;
     }
 
     this.isInitialized = true;
@@ -53,20 +62,35 @@ export class Model extends EventEmitter implements IModel {
     return <Partial<S>>this.state;
   }
 
-  setState<S = EmptyState>(updatedS: Partial<S>): Partial<S> {
+  getPreviousAndCurrentState() {
+    const prevS = this.prevState;
+    const currS = this.getState();
+
+    return [prevS, currS];
+  }
+
+  setState<S = EmptyState>(stateCb: StateCb<S>): Partial<S> {
+    const updatedS = stateCb(this.state as S);
+
     const noStateChanges = Object.entries(updatedS).every(
       ([key, entry]) => this.state[key] === entry
     );
 
     if (noStateChanges) return <Partial<S>>this.state;
 
+    this.prevState = cloneDeep(this.state);
     this.state = Object.assign({}, this.state, updatedS);
-
-    console.log("UPDATED STATE:", updatedS, this.state);
+    Object.freeze(this.state);
 
     this.emit(Object.keys(updatedS));
 
     return <Partial<S>>this.state;
+  }
+
+  emit(propKeys: string[]) {
+    super.emit(propKeys);
+
+    this.externalListeners.forEach(cb => cb(this.state));
   }
 
   getDomId() {
@@ -122,21 +146,12 @@ export class Model extends EventEmitter implements IModel {
       throw new Error(`vDOM item (${parentRef.constructor.name}) not found`);
     }
 
-    // const p = (o: any) => {
-    //   Object.keys(o).forEach(key => {
-    //     console.log(o[key]);
-    //     p(o[key].children);
-    //   });
-    // };
-
     foundItem.children[ref.domId] = {
       ref,
       key,
       children: {},
       parent: parentRef
     };
-    // console.log("log on append");
-    // p(vDOM);
   }
 
   clearVDOMBranch(ref: IComponent) {

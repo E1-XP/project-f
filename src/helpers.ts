@@ -35,7 +35,10 @@ export class Helpers {
     const template = document.createElement("template");
 
     template.innerHTML = markup
-      .map((str, i) => `${str}${getVal(i) || ""}`)
+      .map((str, i) => {
+        const val = getVal(i);
+        return `${str}${val === undefined ? "" : val}`;
+      })
       .join("");
 
     return template;

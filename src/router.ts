@@ -17,10 +17,10 @@ export class Router {
   }
 
   onHistoryPop() {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
 
     window.onpopstate = () =>
-      model.setState(this.routes[window.location.pathname]());
+      model.setState(() => this.routes[window.location.pathname]());
   }
 
   registerRoutes(routes: IRoutes) {
@@ -36,6 +36,6 @@ export class Router {
 
     window.history.pushState(null, "", `${window.location.origin}${path}`);
 
-    model.setState(this.routes[path]());
+    model.setState(() => this.routes[path]());
   }
 }

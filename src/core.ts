@@ -27,7 +27,7 @@ export class AppCore {
 
     console.log("vdom", model.getVDOM());
 
-    if (!this.isComparingVDOMs) setTimeout(instance.onMount, 0);
+    if (!this.isComparingVDOMs) setTimeout(instance.onMount.bind(instance), 0);
 
     console.log(`${instance.constructor.name} Mounted`);
 
@@ -87,6 +87,7 @@ export class AppCore {
 
     model.appendToVDOM(instance, key, undefined, this.tmpVDOMFragment);
     console.log("after append tmp", this.tmpVDOMFragment);
+
     const vDOMNode = model.findVDOMNode(instance, vDOM);
     if (!vDOMNode) throw new Error(`can't find instance in vDOM`);
 
@@ -140,16 +141,20 @@ export class AppCore {
     }
   };
 
-  private callLifecycleInRerenderedChildren = (vDOMChildren: IvDOMLevel) => {
+  private callLifecycleInRerenderedChildren(vDOMChildren: IvDOMLevel) {
+    const model = container.resolve<Model>(types.Model);
     const queue: IvDOMItem[] = [];
 
     const innerFn = (child: IvDOMItem) => {
-      const selectedMethod = this.willComponentExistInNextVDOM(child)
-        ? "onUpdate"
-        : "onMount";
+      const shouldCallOnUpdate = this.willComponentExistInNextVDOM(child);
 
-      console.log(selectedMethod, "will be called on ", child.ref);
-      setTimeout(child.ref[selectedMethod].bind(child.ref), 0);
+      if (shouldCallOnUpdate) {
+        const [prevS, currS] = model.getPreviousAndCurrentState();
+
+        setTimeout(() => child.ref.onUpdate.call(child.ref, prevS, currS), 0);
+      } else {
+        setTimeout(child.ref.onMount.bind(child.ref), 0);
+      }
     };
 
     Object.values(vDOMChildren).forEach(child => queue.push(child));
