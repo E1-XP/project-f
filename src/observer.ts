@@ -1,6 +1,3 @@
-import { injectable, inject } from "inversify";
-import { types } from "./IOC/types";
-
 import { IComponent } from "./component";
 import { AppCore } from "./core";
 
@@ -16,22 +13,21 @@ export interface IEventEmitter {
   emit: (propKeys: string[]) => void;
 }
 
-@injectable()
 export abstract class EventEmitter implements IEventEmitter {
   listeners: Listener[] = [];
 
-  constructor(@inject(types.AppCore) private core: AppCore) {}
+  constructor(private core: AppCore) {}
 
   subscribe = (ref: IComponent) => {
     if (this.listeners.find(itm => itm.ref === ref)) return;
 
     this.listeners.push({ ref, props: ref.props });
     console.log("ADDED LISTENER", this.listeners);
-  };
+  }
 
-  unsubscribe = (ref: IComponent) => {
+  unsubscribe(ref: IComponent) {
     this.listeners = this.listeners.filter(itm => itm.ref !== ref);
-  };
+  }
 
   emit = (propKeys: string[]) => {
     console.log("RUN EMIT aka STATE CHANGED", this.listeners);

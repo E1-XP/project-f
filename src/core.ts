@@ -1,4 +1,5 @@
-import { injectable } from "inversify";
+import { injectable } from "tsyringe";
+import cloneDeep from "lodash.clonedeep";
 
 import { container } from "./IOC";
 import { types } from "./IOC/types";
@@ -14,7 +15,7 @@ export class AppCore {
   isComparingVDOMs = false;
 
   run = (component: any, key?: string, parentInstance?: IComponent) => {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
 
     const instance = this.getInstance(component, key, parentInstance);
 
@@ -40,8 +41,8 @@ export class AppCore {
   };
 
   getInstance(component: any, key?: string, parentInstance?: IComponent) {
-    const model = container.get<Model>(types.Model);
-    const router = container.get<Router>(types.Router);
+    const model = container.resolve<Model>(types.Model);
+    const router = container.resolve<Router>(types.Router);
 
     if (!key) {
       console.log("NEW INSTANCE WITH NO KEY", component);
@@ -76,7 +77,7 @@ export class AppCore {
   rerender = (instance: IComponent) => {
     console.log("RERENDERING ", instance, instance.domId);
 
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
     const vDOM = model.getVDOM();
     const key = model.findVDOMNode(instance)!.key;
 
@@ -117,7 +118,7 @@ export class AppCore {
   };
 
   private callOnUnmountInRemovedChildren = (vDOMChildren: IvDOMLevel) => {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
     const queue: IvDOMItem[] = [];
 
     const innerFn = (child: IvDOMItem) => {
@@ -125,7 +126,6 @@ export class AppCore {
         !!child.parent && !model.findVDOMNode(child.ref, this.tmpVDOMFragment);
 
       if (should) {
-        console.log("now will call onumnount in", child.ref);
         child.ref.onUnmount.call(child.ref);
       }
     };
@@ -160,23 +160,10 @@ export class AppCore {
 
       Object.values(currElem.children).forEach(child => queue.push(child));
     }
-  };
+  }
 
   private willComponentExistInNextVDOM(vDOMChild: IvDOMItem) {
-    const model = container.get<Model>(types.Model);
-
-    // const p = (o: any) => {
-    //   Object.keys(o).forEach(key => {
-    //     console.log(o[key]);
-    //     p(o[key].children);
-    //   });
-    // };
-    // console.log("will log tmp");
-    // p(this.tmpVDOMFragment);
-    // console.log("will log vdom");
-    // p(model.getVDOM());
-
-    // console.log(vDOMChild, model.getVDOM());
+    const model = container.resolve<Model>(types.Model);
 
     const previousElement = model.findVDOMNode(vDOMChild.ref);
 
@@ -184,12 +171,11 @@ export class AppCore {
   }
 
   private unsubscribeChildren = (vDOMChildren: IvDOMLevel) => {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
     const queue: IvDOMItem[] = [];
 
     const unsubChild = (child: IvDOMItem) => {
       model.unsubscribe(child.ref);
-      console.log("UNSUBSCRIBED: ", child.ref, model.listeners.length);
     };
 
     Object.values(vDOMChildren).forEach(child => queue.push(child));

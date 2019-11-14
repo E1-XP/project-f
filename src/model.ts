@@ -1,12 +1,14 @@
-import { injectable } from "inversify";
+import { injectable } from "tsyringe";
+import cloneDeep from "lodash.clonedeep";
 
 import { EventEmitter } from "./observer";
 import { IComponent } from "./component";
+import { AppCore } from "./core";
 
 export interface IModel {
   createStore<S = EmptyState>(initialS?: Partial<S>): Partial<S>;
   getState<S = EmptyState>(): Partial<S>;
-  setState<S = EmptyState>(updatedS: Partial<S>): Partial<S>;
+  setState<S = EmptyState>(stateCb: StateCb): Partial<S>;
   getDomId: () => number;
 }
 
