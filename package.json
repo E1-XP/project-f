@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
-  "types": "./dist/src/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "postinstall": "tsc",
     "start": "webpack-dev-server --config ./webpack.config.dev.js --mode development --history-api-fallback",
