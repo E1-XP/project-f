@@ -1,39 +1,40 @@
-import { injectable, inject } from "inversify";
-import { types } from "./IOC/types";
-
 import { IComponent } from "./component";
 import { AppCore } from "./core";
+import { EmptyState } from "./model";
 
 export interface Listener {
   ref: IComponent;
   props: string[];
 }
 
+type ExtListener<S = EmptyState> = (state?: S) => any;
+
 export interface IEventEmitter {
   listeners: Listener[];
-  subscribe: (ref: IComponent) => void;
-  unsubscribe: (ref: IComponent) => void;
-  emit: (propKeys: string[]) => void;
+  subscribe(ref: IComponent): void;
+  unsubscribe(ref: IComponent): void;
+  emit(propKeys: string[]): void;
+  subscribeExternal(cb: ExtListener): void;
 }
 
-@injectable()
 export abstract class EventEmitter implements IEventEmitter {
   listeners: Listener[] = [];
+  externalListeners: ExtListener<any>[] = [];
 
-  constructor(@inject(types.AppCore) private core: AppCore) {}
+  constructor(private core: AppCore) {}
 
-  subscribe = (ref: IComponent) => {
+  subscribe(ref: IComponent) {
     if (this.listeners.find(itm => itm.ref === ref)) return;
 
     this.listeners.push({ ref, props: ref.props });
     console.log("ADDED LISTENER", this.listeners);
-  };
+  }
 
-  unsubscribe = (ref: IComponent) => {
+  unsubscribe(ref: IComponent) {
     this.listeners = this.listeners.filter(itm => itm.ref !== ref);
-  };
+  }
 
-  emit = (propKeys: string[]) => {
+  emit(propKeys: string[]) {
     console.log("RUN EMIT aka STATE CHANGED", this.listeners);
     // only if props match
     this.listeners.forEach(itm => {
@@ -45,5 +46,11 @@ export abstract class EventEmitter implements IEventEmitter {
         should && this.core.rerender(ref);
       }
     });
-  };
+  }
+
+  subscribeExternal<S = EmptyState>(cb: ExtListener<S>) {
+    if (this.externalListeners.find(itm => itm === cb)) return;
+
+    this.externalListeners.push(cb);
+  }
 }

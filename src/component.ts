@@ -1,7 +1,4 @@
-import { injectable, inject } from "inversify";
-import { types } from "./IOC/types";
-
-import { IModel } from "./model";
+import { IModel, EmptyState } from "./model";
 import { Router } from "./router";
 import { rerender } from "./index";
 
@@ -9,25 +6,21 @@ export interface IComponent {
   props: string[];
   model: IModel;
   domId: number;
-  onMount: () => void;
-  onUnmount: () => void;
-  onUpdate: () => void;
-  shouldUpdate: () => boolean;
-  render: () => HTMLTemplateElement;
+  onMount(): void;
+  onUnmount(): void;
+  onUpdate<S = EmptyState>(prevState: S, state: S): void;
+  shouldUpdate(): boolean;
+  render(): HTMLTemplateElement;
 }
 
-@injectable()
-export class Component implements IComponent {
+export abstract class Component implements IComponent {
   model: IModel;
   router: Router;
   domId: number;
-  props: string[] = [];
+  abstract props: string[];
   // template ?
 
-  constructor(
-    @inject(types.Model) model: IModel,
-    @inject(types.Router) router: Router
-  ) {
+  constructor(model: IModel, router: Router) {
     this.model = model;
     this.router = router;
     this.domId = this.model.getDomId();
@@ -41,7 +34,7 @@ export class Component implements IComponent {
 
   onUnmount() {}
 
-  onUpdate() {}
+  onUpdate<S = EmptyState>(prevState: S, state: S) {}
 
   shouldUpdate() {
     return true;

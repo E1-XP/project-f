@@ -1,4 +1,4 @@
-import { injectable } from "inversify";
+import { injectable } from "tsyringe";
 
 import { container } from "./IOC";
 import { types } from "./IOC/types";
@@ -17,10 +17,10 @@ export class Router {
   }
 
   onHistoryPop() {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
 
     window.onpopstate = () =>
-      model.setState(this.routes[window.location.pathname]());
+      model.setState(() => this.routes[window.location.pathname]());
   }
 
   registerRoutes(routes: IRoutes) {
@@ -28,7 +28,7 @@ export class Router {
   }
 
   routeTo(path: string) {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
 
     if (!this.routes[path]) {
       throw new Error(`Path ${path} not found. Please register route first.`);
@@ -36,6 +36,6 @@ export class Router {
 
     window.history.pushState(null, "", `${window.location.origin}${path}`);
 
-    model.setState(this.routes[path]());
+    model.setState(() => this.routes[path]());
   }
 }

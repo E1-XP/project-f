@@ -1,4 +1,5 @@
-import { injectable } from "inversify";
+import { injectable } from "tsyringe";
+import cloneDeep from "lodash.clonedeep";
 
 import { container } from "./IOC";
 import { types } from "./IOC/types";
@@ -14,7 +15,7 @@ export class AppCore {
   isComparingVDOMs = false;
 
   run = (component: any, key?: string, parentInstance?: IComponent) => {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
 
     const instance = this.getInstance(component, key, parentInstance);
 
@@ -26,7 +27,7 @@ export class AppCore {
 
     console.log("vdom", model.getVDOM());
 
-    if (!this.isComparingVDOMs) setTimeout(instance.onMount, 0);
+    if (!this.isComparingVDOMs) setTimeout(instance.onMount.bind(instance), 0);
 
     console.log(`${instance.constructor.name} Mounted`);
 
@@ -40,8 +41,8 @@ export class AppCore {
   };
 
   getInstance(component: any, key?: string, parentInstance?: IComponent) {
-    const model = container.get<Model>(types.Model);
-    const router = container.get<Router>(types.Router);
+    const model = container.resolve<Model>(types.Model);
+    const router = container.resolve<Router>(types.Router);
 
     if (!key) {
       console.log("NEW INSTANCE WITH NO KEY", component);
@@ -76,7 +77,7 @@ export class AppCore {
   rerender = (instance: IComponent) => {
     console.log("RERENDERING ", instance, instance.domId);
 
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
     const vDOM = model.getVDOM();
     const key = model.findVDOMNode(instance)!.key;
 
@@ -86,6 +87,7 @@ export class AppCore {
 
     model.appendToVDOM(instance, key, undefined, this.tmpVDOMFragment);
     console.log("after append tmp", this.tmpVDOMFragment);
+
     const vDOMNode = model.findVDOMNode(instance, vDOM);
     if (!vDOMNode) throw new Error(`can't find instance in vDOM`);
 
@@ -117,7 +119,7 @@ export class AppCore {
   };
 
   private callOnUnmountInRemovedChildren = (vDOMChildren: IvDOMLevel) => {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
     const queue: IvDOMItem[] = [];
 
     const innerFn = (child: IvDOMItem) => {
@@ -125,8 +127,7 @@ export class AppCore {
         !!child.parent && !model.findVDOMNode(child.ref, this.tmpVDOMFragment);
 
       if (should) {
-        console.log("now will call onumnount in", child.ref);
-        child.ref.onUnmount();
+        child.ref.onUnmount.call(child.ref);
       }
     };
 
@@ -140,16 +141,20 @@ export class AppCore {
     }
   };
 
-  private callLifecycleInRerenderedChildren = (vDOMChildren: IvDOMLevel) => {
+  private callLifecycleInRerenderedChildren(vDOMChildren: IvDOMLevel) {
+    const model = container.resolve<Model>(types.Model);
     const queue: IvDOMItem[] = [];
 
     const innerFn = (child: IvDOMItem) => {
-      const selectedMethod = this.willComponentExistInNextVDOM(child)
-        ? "onUpdate"
-        : "onMount";
+      const shouldCallOnUpdate = this.willComponentExistInNextVDOM(child);
 
-      console.log(selectedMethod, "will be called on ", child.ref);
-      setTimeout(child.ref[selectedMethod], 0);
+      if (shouldCallOnUpdate) {
+        const [prevS, currS] = model.getPreviousAndCurrentState();
+
+        setTimeout(() => child.ref.onUpdate.call(child.ref, prevS, currS), 0);
+      } else {
+        setTimeout(child.ref.onMount.bind(child.ref), 0);
+      }
     };
 
     Object.values(vDOMChildren).forEach(child => queue.push(child));
@@ -160,23 +165,10 @@ export class AppCore {
 
       Object.values(currElem.children).forEach(child => queue.push(child));
     }
-  };
+  }
 
   private willComponentExistInNextVDOM(vDOMChild: IvDOMItem) {
-    const model = container.get<Model>(types.Model);
-
-    // const p = (o: any) => {
-    //   Object.keys(o).forEach(key => {
-    //     console.log(o[key]);
-    //     p(o[key].children);
-    //   });
-    // };
-    // console.log("will log tmp");
-    // p(this.tmpVDOMFragment);
-    // console.log("will log vdom");
-    // p(model.getVDOM());
-
-    // console.log(vDOMChild, model.getVDOM());
+    const model = container.resolve<Model>(types.Model);
 
     const previousElement = model.findVDOMNode(vDOMChild.ref);
 
@@ -184,12 +176,11 @@ export class AppCore {
   }
 
   private unsubscribeChildren = (vDOMChildren: IvDOMLevel) => {
-    const model = container.get<Model>(types.Model);
+    const model = container.resolve<Model>(types.Model);
     const queue: IvDOMItem[] = [];
 
     const unsubChild = (child: IvDOMItem) => {
       model.unsubscribe(child.ref);
-      console.log("UNSUBSCRIBED: ", child.ref, model.listeners.length);
     };
 
     Object.values(vDOMChildren).forEach(child => queue.push(child));

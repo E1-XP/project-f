@@ -1,20 +1,10 @@
-import { injectable, inject } from "inversify";
-import { types } from "./IOC/types";
+import { injectable } from "tsyringe";
 
-import { IComponent } from "./component";
 import { AppCore } from "./core";
 
 @injectable()
 export class Helpers {
-  constructor(@inject(types.AppCore) private core: AppCore) {}
-
-  renderToDOM(app: IComponent, htmlContainer: HTMLElement) {
-    const template = document.createElement("template");
-    template.innerHTML = this.core.run(app, "a");
-
-    htmlContainer.innerHTML = "";
-    htmlContainer.appendChild(template.content);
-  }
+  constructor(private core: AppCore) {}
 
   html(markup: TemplateStringsArray, ...values: any[]) {
     const arrToString = (arr: (string | HTMLTemplateElement)[]) =>
@@ -45,7 +35,10 @@ export class Helpers {
     const template = document.createElement("template");
 
     template.innerHTML = markup
-      .map((str, i) => `${str}${getVal(i) || ""}`)
+      .map((str, i) => {
+        const val = getVal(i);
+        return `${str}${val === undefined ? "" : val}`;
+      })
       .join("");
 
     return template;
