@@ -8,7 +8,7 @@ import { AppCore } from "./core";
 export interface IModel {
   createStore<S = EmptyState>(initialS?: Partial<S>): Partial<S>;
   getState<S = EmptyState>(): Partial<S>;
-  setState<S = EmptyState>(stateCb: StateCb): Partial<S>;
+  setState<S = EmptyState>(stateCb: StateCb<S>): Partial<S>;
   getDomId: () => number;
 }
 
@@ -27,7 +27,7 @@ export interface EmptyState {
   [key: string]: any;
 }
 
-type StateCb<S = EmptyState> = (prevS?: Partial<S>) => Partial<S>;
+type StateCb<S = EmptyState> = (prevS: Partial<S>) => Partial<S>;
 
 @injectable()
 export class Model extends EventEmitter implements IModel {
@@ -42,7 +42,7 @@ export class Model extends EventEmitter implements IModel {
     super(core);
   }
 
-  createStore<S = EmptyState>(initialState?: Partial<S>) {
+  createStore<S = EmptyState>(initialState: Partial<S>) {
     if (Object.keys(this.state).length) {
       throw new Error("Store is already initialized");
     }

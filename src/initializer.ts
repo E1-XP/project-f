@@ -23,7 +23,7 @@ export class Initializer {
 
     this.rootComponent = app;
 
-    model.createStore(initialState || undefined);
+    model.createStore(initialState || {});
     router.registerRoutes(routes);
 
     if (routes && Object.keys(routes).length) {
