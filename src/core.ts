@@ -1,5 +1,4 @@
 import { injectable } from "tsyringe";
-import cloneDeep from "lodash.clonedeep";
 
 import { container } from "./IOC";
 import { types } from "./IOC/types";
