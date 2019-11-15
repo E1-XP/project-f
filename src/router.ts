@@ -1,7 +1,6 @@
-import { injectable } from "tsyringe";
-
-import { container } from "./IOC";
+import { injectable, inject } from "tsyringe";
 import { types } from "./IOC/types";
+
 import { Model, EmptyState } from "./model";
 
 export interface IRoutes {
@@ -12,23 +11,23 @@ export interface IRoutes {
 export class Router {
   routes: IRoutes = {};
 
-  constructor() {
+  constructor(@inject(types.Model) private model: Model) {
+    this.model = model;
+
     this.onHistoryPop();
   }
 
   onHistoryPop() {
-    const model = container.resolve<Model>(types.Model);
-
     window.onpopstate = () =>
-      model.setState(() => this.routes[window.location.pathname]());
+      this.model.setState(() => this.routes[window.location.pathname]());
   }
 
   registerRoutes(routes: IRoutes) {
     this.routes = routes;
   }
 
-  routeTo(path: string) {
-    const model = container.resolve<Model>(types.Model);
+  routeTo(pathName: string) {
+    const path = pathName === "/" ? Object.keys(this.routes)[0] : pathName;
 
     if (!this.routes[path]) {
       throw new Error(`Path ${path} not found. Please register route first.`);
@@ -36,6 +35,6 @@ export class Router {
 
     window.history.pushState(null, "", `${window.location.origin}${path}`);
 
-    model.setState(() => this.routes[path]());
+    this.model.setState(() => this.routes[path]());
   }
 }
