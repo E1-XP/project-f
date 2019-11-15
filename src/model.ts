@@ -1,4 +1,6 @@
-import { injectable } from "tsyringe";
+import { injectable, inject } from "tsyringe";
+import { types } from "./IOC/types";
+
 import cloneDeep from "lodash.clonedeep";
 
 import { EventEmitter } from "./observer";
@@ -38,7 +40,7 @@ export class Model extends EventEmitter implements IModel {
   private state: EmptyState = {};
   private prevState: EmptyState = {};
 
-  constructor(core: AppCore) {
+  constructor(@inject(types.AppCore) core: AppCore) {
     super(core);
   }
 

@@ -1,10 +1,11 @@
-import { injectable } from "tsyringe";
+import { injectable, inject } from "tsyringe";
+import { types } from "./IOC/types";
 
 import { AppCore } from "./core";
 
 @injectable()
 export class Helpers {
-  constructor(private core: AppCore) {}
+  constructor(@inject(types.AppCore) private core: AppCore) {}
 
   html(markup: TemplateStringsArray, ...values: any[]) {
     const arrToString = (arr: (string | HTMLTemplateElement)[]) =>
