@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "postinstall": "tsc",
+    "postinstall": "npm i typescript -g && npm i @types/lodash.clonedeep@4.5.6 && tsc",
     "start": "webpack-dev-server --config ./webpack.config.dev.js --mode development --history-api-fallback",
     "test": "jest",
     "build": "webpack --config ./webpack.config.prod.js --mode production"
@@ -16,8 +16,7 @@
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "reflect-metadata": "^0.1.13",
-    "tsyringe": "^4.0.1",
-    "typescript": "^3.7.2"
+    "tsyringe": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",
@@ -39,6 +38,7 @@
     "tslint": "^5.20.1",
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.2",
     "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0",
