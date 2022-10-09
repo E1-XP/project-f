@@ -1,3 +1,40 @@
+# Project-F
+
+F like framework. I've always wanted to know how it works under the hood. The way modern frameworks magically binds state to view. Diffs and trees. So I created my own. It was a challenge, but I learned a lot.
+
+## Screenshots
+
+![App Screenshot](https://images.ctfassets.net/ysju8du0bph9/72vUHKf8VGTsOEKGOlVzf7/e203839929f104c27226ce08f5f4f8f1/projectf.png)
+
+## Tech Stack
+
+- Typescript
+- TSyringe
+
+## Installation
+
+How to run project locally:
+
+1. Install TypeScript:
+
+```bash
+  npm install -g typescript
+```
+
+2. Add required dependencies (couldn't find a way to fix this the other way)
+
+```bash
+  npm i --save-dev @types/lodash.clonedeep
+```
+
+3. Install package:
+
+```bash
+  npm install -S https://github.com/E1-XP/project-f
+```
+
+4. Now Project-F is installed as a dependency in your project.
+
 ## Documentation
 
 To mount root node:
