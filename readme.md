@@ -103,7 +103,7 @@ export class App extends Component {
     const { isLoading } = this.model.getState();
 
     //each component should be wrapped in run function, have unique (on render fn level) key
-    // and reference this value
+    // and reference parent class this value
     return html`
       <div class="container">
         ${isLoading ? run(Preloader, "pr", this) : run(Page, "pa", this)}
